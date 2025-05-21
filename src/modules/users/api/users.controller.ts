@@ -22,8 +22,18 @@ export class UsersController {
     private usersService: UsersService,
   ) {}
 
-  @Get
+  @Get()
   async getUserById(@Param('id') id: string):Promise<UsersViewDto> {
-    return
+    return this.usersQueryRepository.getUserById(id)
+  }
+
+  @Get()
+  async getAllUsers(@Query() query: any){
+    return this.usersQueryRepository.getAllUsers()
+  }
+
+  @Post()
+  async createUser(@Body() body: CreateUserInputDto):Promise<UsersViewDto{
+    const userId = await this.usersService
   }
 }
