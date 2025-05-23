@@ -9,4 +9,8 @@ export class UsersService {
 
   }
 
+  async deleteUser(id: string){
+
+  }
+
 }

@@ -31,4 +31,10 @@ export class UsersController {
   async createUser(@Body() body: CreateUserInputDto):Promise<UsersViewDto{
     const userId = await this.usersService
   }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteUser(@Param('id') id: string){
+    return this.usersService.deleteUser(id)
+  }
 }
