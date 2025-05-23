@@ -5,10 +5,6 @@ import {FilterQuery} from 'mongoose';
 
 @Injectable()
 export class UsersQueryRepository {
-  async getUserById(id: string){
-
-  }
-
   async getAllUsers(){
 
   }

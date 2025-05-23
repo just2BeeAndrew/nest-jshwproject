@@ -23,11 +23,6 @@ export class UsersController {
   ) {}
 
   @Get()
-  async getUserById(@Param('id') id: string):Promise<UsersViewDto> {
-    return this.usersQueryRepository.getUserById(id)
-  }
-
-  @Get()
   async getAllUsers(@Query() query: any){
     return this.usersQueryRepository.getAllUsers()
   }
