@@ -1,13 +1,12 @@
 import { Prop, Schema } from '@nestjs/mongoose';
+import { AccountData } from './accountData.schema';
+import { CreateUserDomainDto } from './dto/create-user.domain.dto';
 
-@Schema({ timestamps: true })
+@Schema()
 export class User {
-@Prop({ type: String, required: true })
-  login: string;
+  accountData: AccountData;
+}
 
-@Prop({ type: String, required: true })
-  passwordHash: string;
+static createInstatnce(dto: CreateUserDomainDto):UserDocument {
 
-@Prop({ type: String , required: true })
-  email: string;
 }
