@@ -11,6 +11,14 @@ export class AccountData {
   @Prop({ type: String, required: true })
   email: string;
 
-  @Prop({ type: String, required: true })
-  createdat: string;
+  createdAt: Date;
+
+  static create(login:string  , hash:string,email:string): AccountData {
+    const data = new AccountData();
+    data.login = login;
+    data.email = email;
+    data.passwordHash = hash;
+
+    return data;
+  }
 }
