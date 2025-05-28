@@ -22,4 +22,8 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
+UserSchema.loadClass(User);
+
 export type UserDocument = HydratedDocument<User>;
+
+export type UserModelType = Model<UserDocument> & typeof User;

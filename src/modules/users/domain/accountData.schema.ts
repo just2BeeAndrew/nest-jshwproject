@@ -13,11 +13,11 @@ export class AccountData {
 
   createdAt: Date;
 
-  static create(login:string  , hash:string,email:string): AccountData {
+  static create(login:string  , passwordHash:string, email:string): AccountData {
     const data = new AccountData();
     data.login = login;
     data.email = email;
-    data.passwordHash = hash;
+    data.passwordHash = passwordHash;
 
     return data;
   }
