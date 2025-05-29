@@ -6,6 +6,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 export class UsersRepository {
   constructor(@InjectModel(User.name) private UserModel: UserModelType){}
 
+  async findById(id: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({_id: id})
+  }
+
   async save(user: UserDocument){
     await user.save();
   }
