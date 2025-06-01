@@ -22,11 +22,14 @@ export class UsersService {
     await this.usersRepository.save(user);
 
     return user._id.toString();
-
   }
 
   async deleteUser(id: string){
+    const user = await this.usersRepository.findOrNotFoundFail(id)
 
+    user.makeDeleted();
+
+    await  this.usersRepository.save(user);
   }
 
 }

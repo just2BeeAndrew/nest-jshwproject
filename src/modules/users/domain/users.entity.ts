@@ -18,6 +18,13 @@ export class User {
 
     return user as UserDocument;
   }
+
+  makeDeleted() {
+    if (this.accountData.deletedAt !== null) {
+      throw new Error('Deleted');
+  }
+    this.accountData.deletedAt = new Date();
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -13,11 +13,15 @@ export class AccountData {
 
   createdAt: Date;
 
+  @Prop({ type: Date, nullable: true })
+  deletedAt: Date | null;
+
   static create(login:string  , passwordHash:string, email:string): AccountData {
     const data = new AccountData();
     data.login = login;
     data.email = email;
     data.passwordHash = passwordHash;
+    data.deletedAt = null;
 
     return data;
   }
