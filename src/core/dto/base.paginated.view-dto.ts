@@ -1,5 +1,5 @@
 export class PaginatedViewDto<T> {
-  abstract items: T;
+  items: T;
   totalCount: number;
   pagesCount: number;
   page: number;
