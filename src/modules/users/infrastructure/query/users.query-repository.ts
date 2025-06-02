@@ -1,11 +1,17 @@
+import { User, UserModelType } from '../../domain/users.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { UsersViewDto } from '../../api/view-dto/users.view-dto';
+import { NotFoundException } from '@nestjs/common';
 
-import {FilterQuery} from 'mongoose';
-
-@Injectable()
 export class UsersQueryRepository {
-  async getAllUsers(){
+  constructor(
+    @InjectModel(User.name)
+    private UserModel: UserModelType,
+  ) {}
 
+  async getAllUsers(): Promise<UsersViewDto[]> {
+    const result = await this.UserModel.find().exec();
+
+    return result.map((user) => UsersViewDto.mapToView(user))
   }
 }
