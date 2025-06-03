@@ -13,6 +13,19 @@ export class UsersQueryRepository {
     private UserModel: UserModelType,
   ) {}
 
+  async getByIdOrNotFoundFail(id: string): Promise<UsersViewDto> {
+    const user = await this.UserModel.findOne({
+      _id: id,
+      deleteAt: null,
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return UsersViewDto.mapToView(user)
+  }
+
   async getAllUsers(
     query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UsersViewDto[]>> {

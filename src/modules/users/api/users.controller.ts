@@ -25,13 +25,17 @@ export class UsersController {
   ) {}
 
   @Get()
+  @HttpCode(200)
   async getAllUsers(@Query() query: GetUsersQueryParams): Promise<PaginatedViewDto<UsersViewDto[]>> {
     return this.usersQueryRepository.getAllUsers(query)
   }
 
   @Post()
+  @HttpCode(201)
   async createUser(@Body() body: CreateUserInputDto):Promise<UsersViewDto>{
     const userId = await this.usersService.createUser(body);
+
+    return this.usersQueryRepository.getByIdOrNotFoundFail(userId)
   }
 
   @Delete(':id')
