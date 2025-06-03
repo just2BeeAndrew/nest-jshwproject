@@ -30,8 +30,8 @@ export class UsersController {
   }
 
   @Post()
-  async createUser(@Body() body: CreateUserInputDto):Promise<UsersViewDto{
-    const userId = await this.usersService
+  async createUser(@Body() body: CreateUserInputDto):Promise<UsersViewDto>{
+    const userId = await this.usersService.createUser(body);
   }
 
   @Delete(':id')
