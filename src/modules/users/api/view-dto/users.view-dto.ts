@@ -4,15 +4,15 @@ export class UsersViewDto {
   id: string;
   login: string;
   email: string;
-  createdAt: Date;
+  createdAt: string;
 
-  static mapToView(User: UserDocument): UsersViewDto {
+  static mapToView(user: UserDocument): UsersViewDto {
     const dto = new UsersViewDto();
 
-    dto.id = dto.id;
-    dto.login = dto.login;
-    dto.email = dto.email;
-    dto.createdAt = dto.createdAt;
+    dto.id = user._id.toString();
+    dto.login = user.accountData.login;
+    dto.email = user.accountData.email;
+    dto.createdAt = user.accountData.createdAt.toISOString();
 
     return dto;
   }

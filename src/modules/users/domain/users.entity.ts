@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { AccountData } from './accountData.schema';
 import { CreateUserDomainDto } from './dto/create-user.domain.dto';
