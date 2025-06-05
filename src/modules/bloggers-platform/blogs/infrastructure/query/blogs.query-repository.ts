@@ -4,40 +4,52 @@ import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dt
 import { FilterQuery } from 'mongoose';
 import { Blog, BlogModelType } from '../../domain/blogs.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { NotFoundException } from '@nestjs/common';
 
-export class BlogsQueryRepository{
+export class BlogsQueryRepository {
   constructor(
     @InjectModel(Blog.name)
-    private BlogModel: BlogModelType
-  ) {
-  }
+    private BlogModel: BlogModelType,
+  ) {}
 
-  async getAllBlogs(
-    query: GetBlogsQueryParams,
-  ):Promise<PaginatedViewDto<BlogsViewDto[]>> {
-    const filter: FilterQuery<Blog> = {
-      deletedAt: null
-    };
+  async  getBlogByIdOrNotFoundFail(id): Promise<BlogsViewDto> {
+    const blog = await this.BlogModel.findOne({
+      _id: id,
+      deletedAt: null,
 
-    if(query.searchNameTerm) {
-      filter.$or = filter.$or || [];
-      filter.$or.push({
-        name: {$regex: query.searchNameTerm, $options: 'i'},
-      })
+    })
+
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
     }
 
-    const blogs = await this.BlogModel.find({filter})
+    return BlogsViewDto.mapToView(blog)
+  }
+  async getAllBlogs(
+    query: GetBlogsQueryParams,
+  ): Promise<PaginatedViewDto<BlogsViewDto[]>> {
+    const filter: FilterQuery<Blog> = {
+      deletedAt: null,
+    };
 
-    const totalCount = await this.BlogModel.countDocuments(filter)
+    if (query.searchNameTerm) {
+      filter.$or = filter.$or || [];
+      filter.$or.push({
+        name: { $regex: query.searchNameTerm, $options: 'i' },
+      });
+    }
 
-    const items = blogs.map(BlogsViewDto.mapToView)
+    const blogs = await this.BlogModel.find({ filter });
+
+    const totalCount = await this.BlogModel.countDocuments(filter);
+
+    const items = blogs.map(BlogsViewDto.mapToView);
 
     return PaginatedViewDto.mapToView({
       items,
       totalCount,
       page: query.pageNumber,
-      size: query.pageSize
-    })
+      size: query.pageSize,
+    });
   }
 }
-

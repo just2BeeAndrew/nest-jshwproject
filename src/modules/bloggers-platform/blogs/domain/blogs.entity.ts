@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {HydratedDocument, Model} from 'mongoose';
-import { UserSchema } from '../../../users/domain/users.entity';
+import { UserDocument, UserSchema } from '../../../users/domain/users.entity';
+import { CreateBlogDomainDto } from './dto/create-blog.domain.dto';
 
 
 
@@ -24,12 +25,21 @@ export class Blog{
 
   @Prop({ type: Boolean, required: false, default: false})
   isMembership: boolean;
+
+  static createInstance(dto: CreateBlogDomainDto): BlogDocument {
+    const blog = new this();
+    blog.name = dto.name;
+    blog.description = dto.description;
+    blog.websiteUrl = dto.websiteUrl;
+
+    return blog as BlogDocument;
+  };
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 
-UserSchema.loadClass(Blog)
+BlogSchema.loadClass(Blog)
 
 export type BlogDocument = HydratedDocument<Blog>
 
-export type BlogModelType = Model<BlogDocument>
+export type BlogModelType = Model<BlogDocument> & typeof Blog;
