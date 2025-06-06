@@ -16,7 +16,6 @@ export class BlogsQueryRepository {
     const blog = await this.BlogModel.findOne({
       _id: id,
       deletedAt: null,
-
     })
 
     if (!blog) {

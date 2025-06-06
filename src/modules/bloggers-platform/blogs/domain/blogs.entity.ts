@@ -1,12 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import {HydratedDocument, Model} from 'mongoose';
-import { UserDocument, UserSchema } from '../../../users/domain/users.entity';
+import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDomainDto } from './dto/create-blog.domain.dto';
-
-
+import { UpdateBlogsDomainDto } from './dto/update-blog.domain.dto';
 
 @Schema({ timestamps: true })
-export class Blog{
+export class Blog {
   @Prop({ type: String, required: true })
   name: string;
 
@@ -23,7 +21,7 @@ export class Blog{
   @Prop({ type: String, nullable: true })
   deletedAt: Date | null;
 
-  @Prop({ type: Boolean, required: false, default: false})
+  @Prop({ type: Boolean, required: false, default: false })
   isMembership: boolean;
 
   static createInstance(dto: CreateBlogDomainDto): BlogDocument {
@@ -33,13 +31,19 @@ export class Blog{
     blog.websiteUrl = dto.websiteUrl;
 
     return blog as BlogDocument;
-  };
+  }
+
+  update(dto: UpdateBlogsDomainDto) {
+    if (this.name !== dto.name) this.name = dto.name;
+    if (this.description !== dto.description) this.description = dto.description;
+    if (this.websiteUrl !== dto.websiteUrl) this.websiteUrl = dto.websiteUrl;
+  }
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 
-BlogSchema.loadClass(Blog)
+BlogSchema.loadClass(Blog);
 
-export type BlogDocument = HydratedDocument<Blog>
+export type BlogDocument = HydratedDocument<Blog>;
 
 export type BlogModelType = Model<BlogDocument> & typeof Blog;
