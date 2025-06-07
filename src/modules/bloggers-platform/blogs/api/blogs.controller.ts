@@ -53,6 +53,8 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteBlog() {}
+  async deleteBlog(@Param('id') id: string) {
+    return this.blogsService.deleteBlog(id)
+  }
 
 }

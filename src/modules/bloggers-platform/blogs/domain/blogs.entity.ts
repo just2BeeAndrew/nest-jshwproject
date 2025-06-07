@@ -38,6 +38,12 @@ export class Blog {
     if (this.description !== dto.description) this.description = dto.description;
     if (this.websiteUrl !== dto.websiteUrl) this.websiteUrl = dto.websiteUrl;
   }
+
+  softDelete() {
+    if (this.deletedAt !== null) {
+      this.deletedAt = new Date();
+    }
+  }
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
