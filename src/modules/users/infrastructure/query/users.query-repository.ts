@@ -1,12 +1,13 @@
 import { User, UserModelType } from '../../domain/users.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersViewDto } from '../../api/view-dto/users.view-dto';
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.input-dto';
 
+@Injectable()
 export class UsersQueryRepository {
   constructor(
     @InjectModel(User.name)

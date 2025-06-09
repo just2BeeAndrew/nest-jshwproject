@@ -8,6 +8,8 @@ import { BcryptModule } from './modules/bcrypt/bcrypt.module';
 import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
 import { BlogsController } from './modules/bloggers-platform/blogs/api/blogs.controller';
 import { BlogsService } from './modules/bloggers-platform/blogs/application/blogs.service';
+import { PostsController } from './modules/bloggers-platform/posts/api/posts.controller';
+import { PostsService } from './modules/bloggers-platform/posts/application/posts.service';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { BlogsService } from './modules/bloggers-platform/blogs/application/blog
     BcryptModule,
     BloggersPlatformModule,
   ],
-  controllers: [AppController,UsersController, BlogsController],
-  providers: [AppService, BlogsService],
+  controllers: [AppController,UsersController, BlogsController, PostsController],
+  providers: [AppService, BlogsService, PostsService],
 })
 export class AppModule {}
