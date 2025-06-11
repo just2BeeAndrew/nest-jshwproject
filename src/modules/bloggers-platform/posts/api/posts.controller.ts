@@ -4,6 +4,7 @@ import { PostsQueryRepository } from '../infrastructure/query/posts.query-reposi
 import { GetPostsQueryParams } from './input-dto/get-blogs-query-params.input.dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { CreatePostsInputDto } from './input-dto/create-posts.input-dto';
+import { PostsViewDto } from './view-dto/posts.view-dto';
 
 @Controller('posts')
 export class PostsController {
