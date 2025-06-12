@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
-import { GetPostsQueryParams } from './input-dto/get-blogs-query-params.input.dto';
+import { GetPostsQueryParams } from './input-dto/get-posts-query-params.input-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { CreatePostsInputDto } from './input-dto/create-posts.input-dto';
 import { PostsViewDto } from './view-dto/posts.view-dto';
@@ -17,7 +17,7 @@ export class PostsController {
   async getCommentsByPostId() {}
 
   @Get()
-  async getAllPosts(@Query() query: GetPostsQueryParams): Promise<PaginatedViewDto<>> {}
+  async getAllPosts(@Query() query: GetPostsQueryParams) {}
 
   @Post()
   async createPost(@Body() body: CreatePostsInputDto) {}

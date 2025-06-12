@@ -1,7 +1,18 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Model } from 'mongoose';
+import { Blog } from '../../blogs/domain/blogs.entity';
 
 @Schema()
-export class LikesDetails {}
+export class LikeDetails {
+  @Prop({ type: String, required: true })
+  addedAt: string;
+
+  @Prop({ type: String, nullable: true })
+  userId: string | null;
+
+  @Prop({ type: String, nullable: true })
+  login: string | null;
+}
 
 @Schema()
 export class ExtendedLikesInfo {
@@ -11,8 +22,8 @@ export class ExtendedLikesInfo {
   @Prop({ type: Number, default: 0 })
   dislikesCount: number;
 
-  @Prop({ type: Array<LikesDetails>, default: [] })
-  newestLikes: LikesDetails[];
+  @Prop({ type: Array<LikeDetails>, default: [] })
+  newestLikes: LikeDetails[];
 }
 
 @Schema({ timestamps: true })
@@ -36,4 +47,14 @@ export class Post {
   extendedLikesInfo: ExtendedLikesInfo;
 
   createdAt: Date;
+
+  static createInstance(dto: CreatePostDomainDto): PostDocument {}
 }
+
+export const BlogSchema = SchemaFactory.createForClass(Post);
+
+BlogSchema.loadClass(Post);
+
+export type PostDocument = HydratedDocument<Post>;
+
+export type BlogModelType = Model<PostDocument> & typeof Post
