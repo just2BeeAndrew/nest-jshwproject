@@ -23,7 +23,7 @@ export class PostsController {
   async createPost(@Body() body: CreatePostsInputDto) {
     const postId = await this.postsService.createPost(body)
 
-    return this.postsQueryRepository
+    return this.postsQueryRepository.getByIdOrNotFoundFail(postId)
   }
 
   @Get(':id')
