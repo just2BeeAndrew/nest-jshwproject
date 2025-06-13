@@ -20,7 +20,11 @@ export class PostsController {
   async getAllPosts(@Query() query: GetPostsQueryParams) {}
 
   @Post()
-  async createPost(@Body() body: CreatePostsInputDto) {}
+  async createPost(@Body() body: CreatePostsInputDto) {
+    const postId = await this.postsService.createPost(body)
+
+    return this.postsQueryRepository
+  }
 
   @Get(':id')
   async getPostById(@Param('id') id: string) {}
