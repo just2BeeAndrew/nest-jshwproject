@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from './input-dto/get-posts-query-params.input-dto';
@@ -14,10 +14,16 @@ export class PostsController {
   ) {}
 
   @Get(':postId')
-  async getCommentsByPostId() {}
+  @HttpCode(200)
+  async getCommentsByPostId() {
+
+  }
 
   @Get()
-  async getAllPosts(@Query() query: GetPostsQueryParams) {}
+  @HttpCode(200)
+  async getAllPosts(@Query() query: GetPostsQueryParams): Promise<PaginatedViewDto<PostsViewDto[]>> {
+    return this.postsQueryRepository.getAllPosts(query)
+  }
 
   @Post()
   async createPost(@Body() body: CreatePostsInputDto) {
@@ -27,7 +33,10 @@ export class PostsController {
   }
 
   @Get(':id')
-  async getPostById(@Param('id') id: string) {}
+  async getPostById(@Param('id') id: string) {
+    return this.postsQueryRepository.getByIdOrNotFoundFail(id)
+
+  }
 
   @Put(':id')
   async updatePost(@Param('id') id: string) {}

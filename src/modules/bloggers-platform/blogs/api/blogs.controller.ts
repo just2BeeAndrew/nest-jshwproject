@@ -5,7 +5,6 @@ import { GetBlogsQueryParams } from './input-dto/get-blogs-query-params.input-dt
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { BlogsViewDto } from './view-dto/blogs.view-dto';
 import { CreateBlogInputDto } from './input-dto/create-blogs.input-dto';
-import { UpdateBlogsDto } from '../dto/update-blog.dto';
 import { UpdateBlogsInputDto } from './input-dto/update-blogs.input-dto';
 
 @Controller('blogs')

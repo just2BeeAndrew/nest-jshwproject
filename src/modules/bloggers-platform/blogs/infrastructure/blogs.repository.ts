@@ -25,8 +25,6 @@ export class BlogsRepository {
     return blog;
   }
 
-
-
   async save(blog: BlogDocument){
     await blog.save();
   }

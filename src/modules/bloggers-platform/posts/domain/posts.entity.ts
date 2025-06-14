@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { Blog } from '../../blogs/domain/blogs.entity';
 import { CreatePostDomainDto } from './dto/create-posts.domain.dto';
+import { UpdatePostsDomainDto } from './dto/update-posts.domain.dto';
 
 @Schema()
 export class LikeDetails {
@@ -67,6 +68,15 @@ export class Post {
 
     return post as PostDocument
   }
+
+  update(dto: UpdatePostsDomainDto) {
+    if (this.title !== dto.title) this.title = dto.title;
+    if (this.shortDescription !== dto.shortDescription) this.shortDescription = dto.shortDescription;
+    if (this.content !== dto.content) this.content = dto.content;
+    if (this.blogId !== dto.blogId) this.blogId = dto.blogId;
+    if (this.blogName !== dto.blogName) this.blogName = dto.blogName;
+  }
+
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Post);
