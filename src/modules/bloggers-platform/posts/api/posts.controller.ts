@@ -5,6 +5,7 @@ import { GetPostsQueryParams } from './input-dto/get-posts-query-params.input-dt
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { CreatePostsInputDto } from './input-dto/create-posts.input-dto';
 import { PostsViewDto } from './view-dto/posts.view-dto';
+import { UpdatePostsInputDto } from './input-dto/update-posts.input-dto';
 
 @Controller('posts')
 export class PostsController {
@@ -26,6 +27,7 @@ export class PostsController {
   }
 
   @Post()
+  @HttpCode(201)
   async createPost(@Body() body: CreatePostsInputDto) {
     const postId = await this.postsService.createPost(body)
 
@@ -33,14 +35,23 @@ export class PostsController {
   }
 
   @Get(':id')
+  @HttpCode(200)
   async getPostById(@Param('id') id: string) {
     return this.postsQueryRepository.getByIdOrNotFoundFail(id)
 
   }
 
   @Put(':id')
-  async updatePost(@Param('id') id: string) {}
+  @HttpCode(204)
+  async updatePost(@Param('id') id: string, @Body() body: UpdatePostsInputDto) {
+    const postId = await this.postsService.updatePost(id, body)
+
+    return this.postsQueryRepository.getByIdOrNotFoundFail(postId)
+  }
 
   @Delete(':id')
-  async deletePost(@Param('id') id: string) {}
+  @HttpCode(204)
+  async deletePost(@Param('id') id: string) {
+return this.postsService.deletePost(id)
+  }
 }

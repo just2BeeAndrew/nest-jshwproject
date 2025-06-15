@@ -41,8 +41,9 @@ export class Blog {
 
   softDelete() {
     if (this.deletedAt !== null) {
-      this.deletedAt = new Date();
+     throw new Error("Already deleted");
     }
+    this.deletedAt = new Date();
   }
 }
 

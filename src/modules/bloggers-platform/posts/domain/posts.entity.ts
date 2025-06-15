@@ -63,20 +63,27 @@ export class Post {
     post.extendedLikesInfo = {
       likesCount: 0,
       dislikesCount: 0,
-      newestLikes: []
+      newestLikes: [],
     };
 
-    return post as PostDocument
+    return post as PostDocument;
   }
 
   update(dto: UpdatePostsDomainDto) {
     if (this.title !== dto.title) this.title = dto.title;
-    if (this.shortDescription !== dto.shortDescription) this.shortDescription = dto.shortDescription;
+    if (this.shortDescription !== dto.shortDescription)
+      this.shortDescription = dto.shortDescription;
     if (this.content !== dto.content) this.content = dto.content;
     if (this.blogId !== dto.blogId) this.blogId = dto.blogId;
     if (this.blogName !== dto.blogName) this.blogName = dto.blogName;
   }
 
+  softDelete() {
+    if (this.deletedAt !== null) {
+      throw new Error('Already deleted');
+    }
+    this.deletedAt = new Date();
+  }
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Post);

@@ -51,4 +51,12 @@ export class PostsService {
 
     return post._id.toString();
   }
+
+  async deletePost(id: string) {
+    const post = await this.postsRepository.getPostByIdOrNotFoundFail(id);
+
+    post.softDelete()
+
+    await this.postsRepository.save(post);
+  }
 }

@@ -5,7 +5,7 @@ import { CreateUserDomainDto } from './dto/create-user.domain.dto';
 
 @Schema()
 export class User {
-  @Prop({schema: AccountData})
+  @Prop({ schema: AccountData })
   accountData: AccountData;
 
   static createInstance(dto: CreateUserDomainDto): UserDocument {
@@ -23,7 +23,7 @@ export class User {
   makeDeleted() {
     if (this.accountData.deletedAt !== null) {
       throw new Error('Deleted');
-  }
+    }
     this.accountData.deletedAt = new Date();
   }
 }
