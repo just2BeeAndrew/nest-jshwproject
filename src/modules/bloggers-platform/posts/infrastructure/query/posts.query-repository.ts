@@ -5,28 +5,35 @@ import { PostsViewDto } from '../../api/view-dto/posts.view-dto';
 import { GetPostsQueryParams } from '../../api/input-dto/get-posts-query-params.input-dto';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { FilterQuery } from 'mongoose';
+import { BlogsQueryRepository } from '../../../blogs/infrastructure/query/blogs.query-repository';
 
 @Injectable()
 export class PostsQueryRepository {
-  constructor(@InjectModel(Post.name) private PostModel: PostModelType) {}
+  constructor(
+    @InjectModel(Post.name)
+    private PostModel: PostModelType,
+    private blogsQueryRepository: BlogsQueryRepository,
+  ) {}
 
-  async getAllPosts(query: GetPostsQueryParams): Promise<PaginatedViewDto<PostsViewDto[]>> {
+  async getAllPosts(
+    query: GetPostsQueryParams,
+  ): Promise<PaginatedViewDto<PostsViewDto[]>> {
     const filter: FilterQuery<Post> = {
-      deletedAt: null
-    }
+      deletedAt: null,
+    };
 
-    const posts = await this.PostModel.find({filter})
+    const posts = await this.PostModel.find({ filter });
 
     const totalCount = await this.PostModel.countDocuments(posts);
 
-    const items = posts.map(PostsViewDto.mapToView)
+    const items = posts.map(PostsViewDto.mapToView);
 
     return PaginatedViewDto.mapToView({
       items,
       totalCount,
       page: query.pageNumber,
       size: query.pageSize,
-    })
+    });
   }
 
   async getByIdOrNotFoundFail(id: string): Promise<PostsViewDto> {
@@ -39,7 +46,30 @@ export class PostsQueryRepository {
       throw new NotFoundException('Post not found');
     }
 
-    return PostsViewDto.mapToView(post)
+    return PostsViewDto.mapToView(post);
   }
 
+  async getPostsByBlogId(
+    blogId: string,
+    query: GetPostsQueryParams,
+  ): Promise<PaginatedViewDto<PostsViewDto[]>> {
+    const blogs = await this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
+    const filter: FilterQuery<Post> = {
+      blogId,
+      deletedAt: null,
+    };
+
+    const posts = await this.PostModel.find({ filter });
+
+    const totalCount = await this.PostModel.countDocuments(filter);
+
+    const items = posts.map(PostsViewDto.mapToView);
+
+    return PaginatedViewDto.mapToView({
+      items,
+      totalCount,
+      page: query.pageNumber,
+      size: query.pageSize,
+    });
+  }
 }
