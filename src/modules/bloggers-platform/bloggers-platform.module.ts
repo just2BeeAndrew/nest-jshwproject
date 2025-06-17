@@ -8,12 +8,13 @@ import { BlogsQueryRepository } from './blogs/infrastructure/query/blogs.query-r
 import { PostsService } from './posts/application/posts.service';
 import { PostsRepository } from './posts/infrastructure/posts.repository';
 import { PostsQueryRepository } from './posts/infrastructure/query/posts.query-repository';
+import { CommentsController } from './comments/api/comments.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{name: Blog.name, schema:BlogSchema}])
   ],
-  controllers: [BlogsController],
+  controllers: [BlogsController, CommentsController],
   providers: [
     BlogsService,
     BlogsRepository,
