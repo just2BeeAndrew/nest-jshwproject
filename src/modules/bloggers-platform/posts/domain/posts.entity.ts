@@ -48,7 +48,7 @@ export class Post {
   @Prop({ schema: ExtendedLikesInfo, required: true })
   extendedLikesInfo: ExtendedLikesInfo;
 
-  @Prop({ type: String, nullable: true })
+  @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
   createdAt: Date;

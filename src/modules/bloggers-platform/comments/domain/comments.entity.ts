@@ -27,10 +27,13 @@ export class Comment {
   @Prop({ type: CommentatorInfoType, required: true })
   commentatorInfo: CommentatorInfoType;
 
-  createdAt: Date;
-
   @Prop({ type: LikesInfoType })
   likesInfo: LikesInfoType;
+
+  @Prop({ type: Date, nullable: true })
+  deletedAt: Date | null;
+
+  createdAt: Date;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

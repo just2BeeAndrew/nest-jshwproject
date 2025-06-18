@@ -9,12 +9,14 @@ import { PostsService } from './posts/application/posts.service';
 import { PostsRepository } from './posts/infrastructure/posts.repository';
 import { PostsQueryRepository } from './posts/infrastructure/query/posts.query-repository';
 import { CommentsController } from './comments/api/comments.controller';
+import { TestingController } from './testing/api/testing.controller';
+import { TestingService } from './testing/application/testing.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{name: Blog.name, schema:BlogSchema}])
   ],
-  controllers: [BlogsController, CommentsController],
+  controllers: [BlogsController, CommentsController, TestingController],
   providers: [
     BlogsService,
     BlogsRepository,
@@ -22,6 +24,7 @@ import { CommentsController } from './comments/api/comments.controller';
     PostsService,
     PostsRepository,
     PostsQueryRepository,
+    TestingService,
   ],
   exports: []
 })
