@@ -26,6 +26,10 @@ export class User {
     }
     this.accountData.deletedAt = new Date();
   }
+
+  static async clean(this: UserModelType) {
+    await this.deleteMany({})
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

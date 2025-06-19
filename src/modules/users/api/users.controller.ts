@@ -17,7 +17,7 @@ import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dt
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 
 
-@Controller('user-accounts')
+@Controller('users')
 export class UsersController {
   constructor(
     private usersQueryRepository: UsersQueryRepository,

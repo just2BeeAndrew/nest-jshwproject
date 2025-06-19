@@ -84,11 +84,15 @@ export class Post {
     }
     this.deletedAt = new Date();
   }
+
+  static async clean(this: PostModelType) {
+    await this.deleteMany({})
+  }
 }
 
-export const BlogSchema = SchemaFactory.createForClass(Post);
+export const PostSchema = SchemaFactory.createForClass(Post);
 
-BlogSchema.loadClass(Post);
+PostSchema.loadClass(Post);
 
 export type PostDocument = HydratedDocument<Post>;
 

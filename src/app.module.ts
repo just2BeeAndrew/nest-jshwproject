@@ -10,6 +10,9 @@ import { BlogsController } from './modules/bloggers-platform/blogs/api/blogs.con
 import { BlogsService } from './modules/bloggers-platform/blogs/application/blogs.service';
 import { PostsController } from './modules/bloggers-platform/posts/api/posts.controller';
 import { PostsService } from './modules/bloggers-platform/posts/application/posts.service';
+import { TestingController } from './modules/testing/api/testing.controller';
+import { TestingService } from './modules/testing/application/testing.service';
+import { TestingModule } from './modules/testing/testing.module';
 
 @Module({
   imports: [
@@ -17,8 +20,9 @@ import { PostsService } from './modules/bloggers-platform/posts/application/post
     UsersModule,
     BcryptModule,
     BloggersPlatformModule,
+    TestingModule,
   ],
-  controllers: [AppController,UsersController, BlogsController, PostsController],
-  providers: [AppService, BlogsService, PostsService],
+  controllers: [AppController,UsersController, BlogsController, PostsController, TestingController],
+  providers: [AppService, BlogsService, PostsService, TestingService],
 })
 export class AppModule {}

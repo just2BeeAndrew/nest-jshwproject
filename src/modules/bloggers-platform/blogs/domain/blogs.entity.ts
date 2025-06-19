@@ -45,6 +45,10 @@ export class Blog {
     }
     this.deletedAt = new Date();
   }
+
+  static async clean(this: BlogModelType){
+    await this.deleteMany({})
+  }
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);

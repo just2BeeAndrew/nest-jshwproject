@@ -9,14 +9,17 @@ import { PostsService } from './posts/application/posts.service';
 import { PostsRepository } from './posts/infrastructure/posts.repository';
 import { PostsQueryRepository } from './posts/infrastructure/query/posts.query-repository';
 import { CommentsController } from './comments/api/comments.controller';
-import { TestingController } from './testing/api/testing.controller';
-import { TestingService } from './testing/application/testing.service';
+import { Post, PostSchema } from './posts/domain/posts.entity';
+import { PostsController } from './posts/api/posts.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{name: Blog.name, schema:BlogSchema}])
+    MongooseModule.forFeature([
+      {name: Blog.name, schema:BlogSchema},
+      {name: Post.name, schema:PostSchema},
+    ])
   ],
-  controllers: [BlogsController, CommentsController, TestingController],
+  controllers: [BlogsController, PostsController, CommentsController],
   providers: [
     BlogsService,
     BlogsRepository,
@@ -24,9 +27,8 @@ import { TestingService } from './testing/application/testing.service';
     PostsService,
     PostsRepository,
     PostsQueryRepository,
-    TestingService,
   ],
-  exports: []
+  exports: [MongooseModule]
 })
 export class BloggersPlatformModule {
 }

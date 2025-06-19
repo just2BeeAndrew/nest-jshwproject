@@ -11,6 +11,7 @@ import { UsersQueryRepository } from './infrastructure/query/users.query-reposit
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, UsersQueryRepository]
+  providers: [UsersService, UsersRepository, UsersQueryRepository],
+  exports: [MongooseModule],
 })
 export class UsersModule {}
