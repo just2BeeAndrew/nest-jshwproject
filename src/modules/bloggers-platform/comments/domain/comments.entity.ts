@@ -16,7 +16,7 @@ export class LikesInfoType {
   likesCount: number;
 
   @Prop({ type: Number, default: 0 })
-  DislikesCount: number;
+  dislikesCount: number;
 }
 
 @Schema({ timestamps: true })

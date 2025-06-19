@@ -6,7 +6,9 @@ import { UserDocument } from '../../../users/domain/users.entity';
 
 @Injectable()
 export class BlogsRepository {
-  constructor(@InjectModel(Blog.name) private BlogModel: BlogModelType) {}
+  constructor(
+    @InjectModel(Blog.name)
+    private BlogModel: BlogModelType) {}
 
   async findById(id: string): Promise<BlogDocument | null> {
     return this.BlogModel.findOne({

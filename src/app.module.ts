@@ -13,6 +13,7 @@ import { PostsService } from './modules/bloggers-platform/posts/application/post
 import { TestingController } from './modules/testing/api/testing.controller';
 import { TestingService } from './modules/testing/application/testing.service';
 import { TestingModule } from './modules/testing/testing.module';
+import { CommentsController } from './modules/bloggers-platform/comments/api/comments.controller';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { TestingModule } from './modules/testing/testing.module';
     BloggersPlatformModule,
     TestingModule,
   ],
-  controllers: [AppController,UsersController, BlogsController, PostsController, TestingController],
-  providers: [AppService, BlogsService, PostsService, TestingService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

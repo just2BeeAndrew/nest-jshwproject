@@ -11,6 +11,6 @@ export class TestingController {
   @Delete()
   @HttpCode(204)
   async deleteAll(){
-    return this.testingService
+    return this.testingService.deleteAll()
   }
 }

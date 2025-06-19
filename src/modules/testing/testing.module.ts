@@ -5,7 +5,8 @@ import { TestingController } from './api/testing.controller';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [BloggersPlatformModule, UsersModule],
+  imports: [
+    BloggersPlatformModule, UsersModule],
   controllers: [TestingController],
   providers: [TestingService],
   exports: []

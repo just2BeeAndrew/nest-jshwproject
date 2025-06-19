@@ -4,7 +4,10 @@ import { Post, PostDocument, PostModelType } from '../domain/posts.entity';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private PostModel: PostModelType) {}
+  constructor(
+    @InjectModel(Post.name)
+    private PostModel: PostModelType
+  ) {}
 
   async findById(id: string): Promise<PostDocument | null> {
     return this.PostModel.findOne({

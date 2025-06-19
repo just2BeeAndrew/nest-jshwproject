@@ -1,19 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { BlogModelType } from '../../bloggers-platform/blogs/domain/blogs.entity';
-import { PostModelType } from '../../bloggers-platform/posts/domain/posts.entity';
-import { UserModelType } from '../../users/domain/users.entity';
+import {
+  Blog,
+  BlogModelType,
+} from '../../bloggers-platform/blogs/domain/blogs.entity';
+import {
+  Post,
+  PostModelType,
+} from '../../bloggers-platform/posts/domain/posts.entity';
+import { User, UserModelType } from '../../users/domain/users.entity';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class TestingService {
   constructor(
-    private BlogModel: BlogModelType,
-    private PostModel: PostModelType,
-    private UserModel: UserModelType,
+    @InjectModel(Blog.name) private BlogModel: BlogModelType,
+    @InjectModel(Post.name) private PostModel: PostModelType,
+    @InjectModel(User.name) private UserModel: UserModelType,
   ) {}
 
-  async deleteAll(){
-    await this.BlogModel.clean();
-    await this.PostModel.clean();
-    await this.UserModel.clean();
+  async deleteAll() {
+    await Promise.all([
+      this.BlogModel.clean(),
+      this.PostModel.clean(),
+      this.UserModel.clean(),
+    ]);
   }
 }
