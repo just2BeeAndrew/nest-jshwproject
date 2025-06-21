@@ -8,7 +8,7 @@ export class TestingController {
   ) {
   }
 
-  @Delete()
+  @Delete('testing-all')
   @HttpCode(204)
   async deleteAll(){
     return this.testingService.deleteAll()
