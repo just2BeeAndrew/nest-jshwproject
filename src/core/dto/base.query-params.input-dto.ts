@@ -5,7 +5,7 @@ export class BaseQueryParams {
   pageNumber: number = 1;
   @Type(() => Number)
   pageSize: number = 10;
-  sortDirection: SortDirection = SortDirection.Desc;
+  sortDirection: SortDirection = SortDirection.Asc;
 
   calculateSkip(){
    return(this.pageNumber - 1) * this.pageSize;

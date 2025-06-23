@@ -6,6 +6,7 @@ import { GetPostsQueryParams } from '../../api/input-dto/get-posts-query-params.
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { FilterQuery } from 'mongoose';
 import { BlogsQueryRepository } from '../../../blogs/infrastructure/query/blogs.query-repository';
+import { skip } from 'rxjs';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -53,13 +54,17 @@ export class PostsQueryRepository {
     blogId: string,
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    const blogs = await this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
+    const blog =
+      await this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
     const filter: FilterQuery<Post> = {
-      blogId,
+      blogId: blogId,
       deletedAt: null,
     };
 
-    const posts = await this.PostModel.find({ filter });
+    const posts = await this.PostModel.find(filter)
+      .sort({ [query.sortBy]: query.sortDirection })
+      .skip(query.calculateSkip())
+      .limit(query.pageSize);
 
     const totalCount = await this.PostModel.countDocuments(filter);
 

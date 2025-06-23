@@ -16,8 +16,7 @@ export class PostsService {
   ) {}
 
   async createPost(dto: CreatePostDto): Promise<string> {
-    const { blogId } = dto;
-    const blog = await this.blogsRepository.getBlogByIdOrNotFoundFail(blogId);
+    const blog = await this.blogsRepository.getBlogByIdOrNotFoundFail(dto.blogId);
 
     const post = this.PostModel.createInstance({
       title: dto.title,

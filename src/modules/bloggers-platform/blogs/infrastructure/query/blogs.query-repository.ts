@@ -12,7 +12,7 @@ export class BlogsQueryRepository {
     private BlogModel: BlogModelType,
   ) {}
 
-  async  getBlogByIdOrNotFoundFail(id): Promise<BlogsViewDto> {
+  async  getBlogByIdOrNotFoundFail(id:string): Promise<BlogsViewDto> {
     const blog = await this.BlogModel.findOne({
       _id: id,
       deletedAt: null,
@@ -24,6 +24,7 @@ export class BlogsQueryRepository {
 
     return BlogsViewDto.mapToView(blog)
   }
+
   async getAllBlogs(
     query: GetBlogsQueryParams,
   ): Promise<PaginatedViewDto<BlogsViewDto[]>> {

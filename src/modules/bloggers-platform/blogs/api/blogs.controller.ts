@@ -29,8 +29,8 @@ export class BlogsController {
 
   @Post()
   @HttpCode(201)
-  async createBlog(@Body() body: CreateBlogInputDto):Promise<BlogsViewDto> {
-    const blogId = this.blogsService.createBlog(body);
+  async createBlog(@Body() body: CreateBlogInputDto)/*:Promise<BlogsViewDto>*/ {
+    const blogId = await this.blogsService.createBlog(body);
 
     return this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
   }

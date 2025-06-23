@@ -21,7 +21,7 @@ export class BlogsRepository {
     const blog = await this.findById(id)
 
     if (!blog) {
-      throw new NotFoundException("User not found.");
+      throw new NotFoundException("Blog not found.");
     }
 
     return blog;
