@@ -1,4 +1,4 @@
 export enum BlogsSortBy {
-  CreateAt = 'createdAt',
+  CreatedAt = 'createdAt',
   Name = 'name',
 }

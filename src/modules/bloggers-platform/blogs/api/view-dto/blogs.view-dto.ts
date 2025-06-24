@@ -19,6 +19,5 @@ export class BlogsViewDto {
     dto.isMembership = blog.isMembership;
 
     return dto;
-
   }
 }

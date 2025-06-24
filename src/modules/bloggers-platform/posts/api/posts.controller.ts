@@ -16,17 +16,30 @@ import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { CreatePostsInputDto } from './input-dto/create-posts.input-dto';
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { UpdatePostsInputDto } from './input-dto/update-posts.input-dto';
+import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query-repository';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
     private postsQueryRepository: PostsQueryRepository,
+    private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
-  @Get(':postId')
+
+
+  @Get(':postId/comments')
   @HttpCode(200)
-  async getCommentsByPostId() {}
+  async getCommentsByPostId(@Param('postId') postId: string) {
+    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(postId)
+  }
+
+  @Get(':id')
+  @HttpCode(200)
+  async getPostById(@Param('id') id: string) {
+    console.log("1", id);
+    return this.postsQueryRepository.getByIdOrNotFoundFail(id);
+  }
 
   @Get()
   @HttpCode(200)
@@ -44,11 +57,7 @@ export class PostsController {
     return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
   }
 
-  @Get(':id')
-  @HttpCode(200)
-  async getPostById(@Param('id') id: string) {
-    return this.postsQueryRepository.getByIdOrNotFoundFail(id);
-  }
+
 
   @Put(':id')
   @HttpCode(204)

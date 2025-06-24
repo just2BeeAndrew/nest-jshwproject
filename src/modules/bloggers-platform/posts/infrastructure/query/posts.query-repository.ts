@@ -38,10 +38,13 @@ export class PostsQueryRepository {
   }
 
   async getByIdOrNotFoundFail(id: string): Promise<PostsViewDto> {
+    console.log("2", id);
     const post = await this.PostModel.findOne({
       _id: id,
       deleteAt: null,
     });
+
+    console.log("3",post);
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -54,6 +57,7 @@ export class PostsQueryRepository {
     blogId: string,
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
+    console.log(query);
     const blog =
       await this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
     const filter: FilterQuery<Post> = {

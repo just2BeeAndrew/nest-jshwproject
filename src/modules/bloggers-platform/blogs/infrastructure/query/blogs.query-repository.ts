@@ -12,22 +12,23 @@ export class BlogsQueryRepository {
     private BlogModel: BlogModelType,
   ) {}
 
-  async  getBlogByIdOrNotFoundFail(id:string): Promise<BlogsViewDto> {
+  async getBlogByIdOrNotFoundFail(id: string): Promise<BlogsViewDto> {
     const blog = await this.BlogModel.findOne({
       _id: id,
       deletedAt: null,
-    })
+    });
 
     if (!blog) {
       throw new NotFoundException('Blog not found');
     }
 
-    return BlogsViewDto.mapToView(blog)
+    return BlogsViewDto.mapToView(blog);
   }
 
   async getAllBlogs(
     query: GetBlogsQueryParams,
   ): Promise<PaginatedViewDto<BlogsViewDto[]>> {
+    console.log(query);
     const filter: FilterQuery<Blog> = {
       deletedAt: null,
     };
@@ -39,7 +40,10 @@ export class BlogsQueryRepository {
       });
     }
 
-    const blogs = await this.BlogModel.find({ filter });
+    const blogs = await this.BlogModel.find(filter)
+      .sort({ [query.sortBy]: query.sortDirection })
+      .skip(query.calculateSkip())
+      .limit(query.pageSize);
 
     const totalCount = await this.BlogModel.countDocuments(filter);
 

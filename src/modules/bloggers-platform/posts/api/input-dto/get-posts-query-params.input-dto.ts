@@ -2,5 +2,5 @@ import { BaseQueryParams } from '../../../../../core/dto/base.query-params.input
 import { PostsSortBy } from './posts-sort-by';
 
 export class GetPostsQueryParams extends BaseQueryParams {
-  sortBy: PostsSortBy.CreatedAt;
+  sortBy: PostsSortBy = PostsSortBy.CreatedAt;
 }
