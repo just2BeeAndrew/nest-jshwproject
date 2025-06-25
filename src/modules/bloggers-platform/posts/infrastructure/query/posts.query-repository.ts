@@ -23,7 +23,10 @@ export class PostsQueryRepository {
       deletedAt: null,
     };
 
-    const posts = await this.PostModel.find({ filter });
+    const posts = await this.PostModel.find(filter)
+      .sort({ [query.sortBy]: query.sortDirection })
+      .skip(query.calculateSkip())
+      .limit(query.pageSize);
 
     const totalCount = await this.PostModel.countDocuments(posts);
 
@@ -38,13 +41,10 @@ export class PostsQueryRepository {
   }
 
   async getByIdOrNotFoundFail(id: string): Promise<PostsViewDto> {
-    console.log("2", id);
     const post = await this.PostModel.findOne({
       _id: id,
-      deleteAt: null,
+      deletedAt: null,
     });
-
-    console.log("3",post);
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -57,7 +57,6 @@ export class PostsQueryRepository {
     blogId: string,
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    console.log(query);
     const blog =
       await this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
     const filter: FilterQuery<Post> = {

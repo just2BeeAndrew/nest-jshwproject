@@ -1,6 +1,4 @@
-import { CreateUserDto } from '../../dto/create-user.dto';
-
-export class CreateUserInputDto implements CreateUserDto{
+export class CreateUserInputDto {
   login: string;
   password: string;
   email: string;

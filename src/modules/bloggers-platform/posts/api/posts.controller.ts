@@ -37,7 +37,6 @@ export class PostsController {
   @Get(':id')
   @HttpCode(200)
   async getPostById(@Param('id') id: string) {
-    console.log("1", id);
     return this.postsQueryRepository.getByIdOrNotFoundFail(id);
   }
 

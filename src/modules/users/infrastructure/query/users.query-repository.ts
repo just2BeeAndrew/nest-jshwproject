@@ -6,6 +6,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.input-dto';
+import { UsersSortBy } from '../../api/input-dto/users-sort-by';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -17,7 +18,7 @@ export class UsersQueryRepository {
   async getByIdOrNotFoundFail(id: string): Promise<UsersViewDto> {
     const user = await this.UserModel.findOne({
       _id: id,
-      deleteAt: null,
+      deletedAt: null,
     });
 
     if (!user) {
@@ -31,25 +32,33 @@ export class UsersQueryRepository {
     query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UsersViewDto[]>> {
     const filter: FilterQuery<User> = {
-      deletedAt: null,
+      "accountData.deletedAt": null,
     };
 
     if (query.searchLoginTerm) {
       filter.$or = filter.$or || [];
       filter.$or.push({
-        login: { $regex: query.searchLoginTerm, $options: 'i' },
+        'accountData.login': { $regex: query.searchLoginTerm, $options: 'i' },
       });
     }
 
     if (query.searchEmailTerm) {
       filter.$or = filter.$or || [];
       filter.$or.push({
-        email: { $regex: query.searchEmailTerm, $options: 'i' },
+        'accountData.email': { $regex: query.searchEmailTerm, $options: 'i' },
       });
     }
 
-    const users = await this.UserModel.find({ filter })
-      .sort({ [query.sortBy]: query.sortDirection })
+    const sortByMapping = {
+      [UsersSortBy.CreatedAt]: 'accountData.createdAt',
+      [UsersSortBy.Login]: 'accountData.login',
+      [UsersSortBy.Email]: 'accountData.createdAt',
+    }
+
+    const sortBy = sortByMapping[query.sortBy] || 'accountData.createdAt';
+
+    const users = await this.UserModel.find( filter )
+      .sort({ [sortBy]: query.sortDirection })
       .skip(query.calculateSkip())
       .limit(query.pageSize);
 

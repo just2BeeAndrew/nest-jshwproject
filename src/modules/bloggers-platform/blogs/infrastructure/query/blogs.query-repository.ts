@@ -28,7 +28,6 @@ export class BlogsQueryRepository {
   async getAllBlogs(
     query: GetBlogsQueryParams,
   ): Promise<PaginatedViewDto<BlogsViewDto[]>> {
-    console.log(query);
     const filter: FilterQuery<Blog> = {
       deletedAt: null,
     };

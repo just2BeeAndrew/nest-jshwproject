@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
-  Query,
+  Query, RawBodyRequest, Req,
 } from '@nestjs/common';
 import {UsersQueryRepository} from '../infrastructure/query/users.query-repository';
 import {UsersViewDto} from './view-dto/users.view-dto';

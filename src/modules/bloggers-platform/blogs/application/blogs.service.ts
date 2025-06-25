@@ -17,6 +17,7 @@ export class BlogsService {
     const blog = await this.BlogModel.createInstance(dto);
 
     await this.blogRepository.save(blog);
+
     return blog._id.toString()
   }
 

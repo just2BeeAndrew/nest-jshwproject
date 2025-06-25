@@ -32,6 +32,8 @@ export class UsersService {
 
     user.makeDeleted();
 
+    console.log(user);
+
     await this.usersRepository.save(user);
   }
 }
