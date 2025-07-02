@@ -1,5 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
-import {Request, Response} from 'express';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ErrorResponseBody } from './error-response-body';
 import * as process from 'node:process';
 import { DomainExceptionCode } from './domain-exception-codes';
@@ -13,14 +18,15 @@ export class AllExceptionFilter implements ExceptionFilter {
 
     const message = exception.message || 'Unknown exception occurred.';
     const status = HttpStatus.INTERNAL_SERVER_ERROR;
-    const responseBody = this.buildResponseBody(request.url, message)
+    const responseBody = this.buildResponseBody(request.url, message);
 
     response.status(status).json(responseBody);
   }
 
   private buildResponseBody(
     requestUrl: string,
-    message: string):ErrorResponseBody {
+    message: string,
+  ): ErrorResponseBody {
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (isProduction) {
@@ -32,5 +38,13 @@ export class AllExceptionFilter implements ExceptionFilter {
         code: DomainExceptionCode.InternalServerError,
       };
     }
+
+    return {
+      timestamp: new Date().toISOString(),
+      path: requestUrl,
+      message,
+      extensions: [],
+      code: DomainExceptionCode.InternalServerError,
+    };
   }
 }
