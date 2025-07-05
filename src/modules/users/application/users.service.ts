@@ -4,6 +4,9 @@ import { User, UserModelType } from '../domain/users.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { BcryptService } from '../../bcrypt/application/bcrypt.service';
+import { validateOrReject } from 'class-validator';
+import { DomainException } from '../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +18,14 @@ export class UsersService {
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<string> {
+    if (dto instanceof CreateUserDto === false) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Incorrect User data',
+      });
+    }
+    await validateOrReject(CreateUserDto);
+
     const passwordHash = await this.bcryptService.createHash(dto.password);
     const user = this.UserModel.createInstance({
       login: dto.login,
