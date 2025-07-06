@@ -1,14 +1,18 @@
-import { IsEmail, Length, Matches } from 'class-validator';
+import { IsEmail, IsString, Length, Matches } from 'class-validator';
+import { emailConstants, loginConstants, passwordConstants } from '../../domain/users.entity';
 
 export class CreateUserInputDto {
-  @Length(3, 10)
-  @Matches(/^[a-zA-Z0-9_-]*$/)
+  @IsString()
+  @Length(loginConstants.minLength, loginConstants.maxLength)
+  @Matches(loginConstants.match)
   login: string;
 
-  @Length(6, 20)
+  @IsString()
+  @Length(passwordConstants.minLength, passwordConstants.maxLength)
   password: string;
 
+  @IsString()
   @IsEmail()
-  @Matches(/^[\w.-]+@([\w-]+\.)+[\w-]{2,}$/,{message: 'Invalid email format'})
+  @Matches(emailConstants.match,{message: 'Invalid email format'})
   email: string;
 }

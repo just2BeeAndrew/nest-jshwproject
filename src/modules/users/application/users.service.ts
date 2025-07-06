@@ -18,13 +18,12 @@ export class UsersService {
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<string> {
-    if (dto instanceof CreateUserDto === false) {
+    if (!(dto instanceof CreateUserDto)) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
         message: 'Incorrect User data',
       });
     }
-    await validateOrReject(CreateUserDto);
 
     const passwordHash = await this.bcryptService.createHash(dto.password);
     const user = this.UserModel.createInstance({
