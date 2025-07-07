@@ -1,17 +1,18 @@
 import { IsEmail, IsString, Length, Matches } from 'class-validator';
 import { emailConstants, loginConstants, passwordConstants } from '../../domain/users.entity';
+import { Trim } from '../../../../core/decorators/transform/trim';
+import { IsStringWithTrim } from '../../../../core/decorators/validation/is-string-with-trim';
+import { IsStringTrimAndLength } from '../../../../core/decorators/validation/is-string-trim-and-length';
 
 export class CreateUserInputDto {
-  @IsString()
-  @Length(loginConstants.minLength, loginConstants.maxLength)
+  @IsStringTrimAndLength(loginConstants.minLength, loginConstants.maxLength)
   @Matches(loginConstants.match)
   login: string;
 
-  @IsString()
-  @Length(passwordConstants.minLength, passwordConstants.maxLength)
+  @IsStringTrimAndLength(passwordConstants.minLength, passwordConstants.maxLength)
   password: string;
 
-  @IsString()
+  @IsStringWithTrim()
   @IsEmail()
   @Matches(emailConstants.match,{message: 'Invalid email format'})
   email: string;
