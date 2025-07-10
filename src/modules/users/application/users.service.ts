@@ -4,7 +4,6 @@ import { User, UserModelType } from '../domain/users.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { BcryptService } from '../../bcrypt/application/bcrypt.service';
-import { validateOrReject } from 'class-validator';
 import { DomainException } from '../../../core/exceptions/domain-exception';
 import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
 
@@ -22,6 +21,22 @@ export class UsersService {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
         message: 'Incorrect User data',
+      });
+    }
+
+    const isLoginTaken = await this.usersRepository.findByLogin(dto.login);
+    if (isLoginTaken) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Login already taken ',
+      });
+    }
+
+    const isEmailTaken = await this.usersRepository.findByEmail(dto.email);
+    if (isEmailTaken) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Email already taken ',
       });
     }
 

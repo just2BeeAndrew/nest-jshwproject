@@ -15,7 +15,7 @@ import {UsersService} from '../application/users.service';
 import { CreateUserInputDto} from './input-dto/create-users.input-dto';
 import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
-import { BasicAuthGuard } from '../guards/basic/basic-auth.guard';
+import { BasicAuthGuard } from '../../../core/guards/basic/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
 
 
