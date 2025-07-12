@@ -25,7 +25,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mongoose": "^11.0.3",
-    "@nestjs/passport": "github:nestjs/passport",
+    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "github:nestjs/swagger",
     "@types/passport-jwt": "^4.0.1",
