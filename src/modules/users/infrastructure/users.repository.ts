@@ -27,27 +27,15 @@ export class UsersRepository {
     return user;
   }
 
-  async findByLogin(login: string): Promise<boolean> {
-    const isLoginTaken = await this.UserModel.findOne({
-      'accountData.login': login
-    })
-
-    if (isLoginTaken) {
-      return true
-    }
-
-    return false
+  async findByLogin(login: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({'accountData.login': login})
   }
 
-  async findByEmail(email: string): Promise<boolean> {
-    const isEmailTaken = await this.UserModel.findOne({
-      'accountData.email': email
-    })
+  async isLoginTaken(login: string): Promise<boolean> {
+    return !!(await this.UserModel.countDocuments({'accountData.login': login}))
+  }
 
-    if (isEmailTaken) {
-      return true
-    }
-
-    return false
+  async isEmailTaken(email: string): Promise<boolean> {
+    return !!(await this.UserModel.countDocuments({'accountData.email': email}))
   }
 }
