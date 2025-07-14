@@ -14,10 +14,24 @@ export class AuthService {
   ) {
   }
 
-  async validateUSer(
+  async validateUser(
     login: string,
     password: string,
   ):Promise<UserContextDto | null> {
-    const await this.usersRepository.findByLogin()
+    const user = await this.usersRepository.findByLogin(login)
+    if(!user){
+      return null;
+    }
+
+    const isPasswordValid = await this.bcryptService.comparePassword({
+      password: password,
+      hash: user.accountData.passwordHash,
+    })
+
+    if(!isPasswordValid){
+      return null;
+    }
+
+    return {id: user._id.toString()};
   }
 }

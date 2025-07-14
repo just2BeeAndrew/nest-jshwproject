@@ -9,4 +9,8 @@ export class BcryptService {
 
     return passwordHash
   }
+
+  comparePassword (args: { password: string, hash: string }): Promise<boolean> {
+    return bcrypt.compare(args.password, args.hash);
+  }
 }
