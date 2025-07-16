@@ -1,7 +1,12 @@
-import { Controller, Get, HttpCode, Post } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthQueryRepository } from '../infrastructure/query/auth.query-repository';
 import { UsersService } from '../application/users.service';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from '../guards/local/local-auth.guard';
+import { ApiBody } from '@nestjs/swagger';
+import { ExtractUserFromRequest } from '../guards/decorators/param/extract-user-from-request.decorator';
+import { UserContextDto } from '../guards/dto/user-context.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,8 +17,20 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @HttpCode(200)
-  async login() {}
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
+  @ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          login: { type: 'string', example: 'login123' },
+          password: { type: 'string', example: 'superpassword' },
+        },
+      },
+    })
+  async login(@ExtractUserFromRequest() user: UserContextDto): Promise<{accessToken: string}> {
+    return this.authService.login(user.id);
+  }
 
   @Post('password-recovery')
   @HttpCode(200)
