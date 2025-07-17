@@ -8,14 +8,21 @@ import { UsersQueryRepository } from './infrastructure/query/users.query-reposit
 import { BcryptModule } from '../bcrypt/bcrypt.module';
 import { AuthController } from './api/auth.controller';
 import { AuthService } from './application/auth.service';
+import { JwtModule } from '@nestjs/jwt';
+import { LocalStrategy } from '../../core/guards/local/local.strategy';
+import { JwtStrategy } from '../../core/guards/bearer/jwt-auth.guard';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    BcryptModule
+    BcryptModule,
+    JwtModule.register({
+      secret: 'access-token-secret',
+      signOptions: { expiresIn: '1h' },
+    })
   ],
   controllers: [UsersController, AuthController],
-  providers: [UsersService, UsersRepository, UsersQueryRepository, AuthService],
+  providers: [UsersService, UsersRepository, UsersQueryRepository, AuthService, LocalStrategy, JwtStrategy],
   exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}

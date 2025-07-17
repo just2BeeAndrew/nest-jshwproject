@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { AuthService } from '../../application/auth.service';
-import { UserContextDto } from '../dto/user-context.dto';
-import { DomainException } from '../../../../core/exceptions/domain-exception';
-import { DomainExceptionCode } from '../../../../core/exceptions/filters/domain-exception-codes';
+import { AuthService } from '../../../modules/users/application/auth.service';
+import { UserContextDto } from '../../../modules/users/guards/dto/user-context.dto';
+import { DomainException } from '../../exceptions/domain-exception';
+import { DomainExceptionCode } from '../../exceptions/filters/domain-exception-codes';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(private authService: AuthService) {
     super({ usernameField: 'login' });
   }
