@@ -4,7 +4,7 @@ import { AuthQueryRepository } from '../infrastructure/query/auth.query-reposito
 import { UsersService } from '../application/users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from '../guards/local/local-auth.guard';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { ExtractUserFromRequest } from '../guards/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 
@@ -52,7 +52,9 @@ export class AuthController {
   @HttpCode(200)
   async registrationEmailResending() {}
 
+  @ApiBearerAuth()
   @Get('me')
-  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async me() {}
 }
