@@ -18,7 +18,9 @@ import { UserContextDto } from '../guards/dto/user-context.dto';
 import { JwtAuthGuard } from '../../../core/guards/bearer/jwt-auth.guard';
 import { MeViewDto } from './view-dto/me.view-dto';
 import { CreateUserInputDto } from './input-dto/create-users.input-dto';
+import { SkipThrottle, Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
+@UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -27,7 +29,9 @@ export class AuthController {
     private authQueryRepository: AuthQueryRepository,
   ) {}
 
+  @SkipThrottle()
   @Post('login')
+  @SkipThrottle()
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @ApiBody({
@@ -67,6 +71,7 @@ export class AuthController {
   @HttpCode(200)
   async registrationEmailResending() {}
 
+  @SkipThrottle()
   @ApiBearerAuth()
   @Get('me')
   @UseGuards(JwtAuthGuard)

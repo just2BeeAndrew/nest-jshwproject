@@ -11,6 +11,7 @@ import { AuthService } from './application/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from '../../core/guards/local/local.strategy';
 import { JwtStrategy } from '../../core/guards/bearer/jwt.strategy';
+import { ThrottlerModule, seconds, Throttle } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -19,10 +20,23 @@ import { JwtStrategy } from '../../core/guards/bearer/jwt.strategy';
     JwtModule.register({
       secret: 'access-token-secret',
       signOptions: { expiresIn: '1h' },
-    })
+    }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 10_000,
+        limit: 5,
+      },
+    ]),
   ],
   controllers: [UsersController, AuthController],
-  providers: [UsersService, UsersRepository, UsersQueryRepository, AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    UsersService,
+    UsersRepository,
+    UsersQueryRepository,
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+  ],
   exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}
