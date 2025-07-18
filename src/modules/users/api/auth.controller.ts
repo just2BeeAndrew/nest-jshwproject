@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -16,6 +17,7 @@ import { ExtractUserFromRequest } from '../guards/decorators/param/extract-user-
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { JwtAuthGuard } from '../../../core/guards/bearer/jwt-auth.guard';
 import { MeViewDto } from './view-dto/me.view-dto';
+import { CreateUserInputDto } from './input-dto/create-users.input-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -56,8 +58,10 @@ export class AuthController {
   async registrationConfirmation() {}
 
   @Post('registration')
-  @HttpCode(200)
-  async registration() {}
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async registration(@Body() body: CreateUserInputDto) {
+    return this.authService.registration(body)
+  }
 
   @Post('registration-email-resending')
   @HttpCode(200)

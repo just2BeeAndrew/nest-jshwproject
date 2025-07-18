@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { AccountData } from './accountData.schema';
 import { CreateUserDomainDto } from './dto/create-user.domain.dto';
+import { EmailConfirmation } from './emailConfirmation.schema';
 
 export const loginConstants = {
   minLength: 3,
@@ -22,6 +23,7 @@ export const emailConstants = {
 export class User {
   @Prop({ schema: AccountData })
   accountData: AccountData;
+  emailConfirmation: EmailConfirmation;
 
   static createInstance(dto: CreateUserDomainDto): UserDocument {
     const user = new this();
@@ -32,7 +34,13 @@ export class User {
       dto.email,
     );
 
+    user.emailConfirmation = EmailConfirmation.create()
+
     return user as UserDocument;
+  }
+
+  setConfirmationCode(confirmationCode: string) {
+    this.emailConfirmation.confirmationCode = confirmationCode;
   }
 
   makeDeleted() {

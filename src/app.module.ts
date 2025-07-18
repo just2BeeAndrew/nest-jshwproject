@@ -14,6 +14,7 @@ import { TestingController } from './modules/testing/api/testing.controller';
 import { TestingService } from './modules/testing/application/testing.service';
 import { TestingModule } from './modules/testing/testing.module';
 import { CommentsController } from './modules/bloggers-platform/comments/api/comments.controller';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CommentsController } from './modules/bloggers-platform/comments/api/com
     BcryptModule,
     BloggersPlatformModule,
     TestingModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

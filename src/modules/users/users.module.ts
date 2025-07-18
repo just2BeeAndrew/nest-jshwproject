@@ -10,7 +10,7 @@ import { AuthController } from './api/auth.controller';
 import { AuthService } from './application/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from '../../core/guards/local/local.strategy';
-import { JwtStrategy } from '../../core/guards/bearer/jwt-auth.guard';
+import { JwtStrategy } from '../../core/guards/bearer/jwt.strategy';
 
 @Module({
   imports: [

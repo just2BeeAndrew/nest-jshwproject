@@ -2,7 +2,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 
 @Schema({ timestamps: true })
 export class AccountData {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, unique: true })
   login: string;
 
   @Prop({ type: String, required: true })
