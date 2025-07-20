@@ -1,6 +1,6 @@
 import {InjectModel} from '@nestjs/mongoose';
 import {User, UserDocument, UserModelType} from '../domain/users.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UsersRepository {
@@ -29,6 +29,10 @@ export class UsersRepository {
 
   async findByLogin(login: string): Promise<UserDocument | null> {
     return this.UserModel.findOne({'accountData.login': login})
+  }
+
+  async findUserByConfirmationCode(confirmationCode: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({'emailConfirmation.confirmationCode': confirmationCode})
   }
 
   async isLoginTaken(login: string): Promise<boolean> {

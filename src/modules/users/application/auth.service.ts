@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { BcryptService } from '../../bcrypt/application/bcrypt.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from './users.service';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from '../../notifications/application/email.service';
 
 @Injectable()
@@ -16,49 +16,69 @@ export class AuthService {
     private jwtService: JwtService,
     private bcryptService: BcryptService,
     private emailService: EmailService,
-
-  ) {
-  }
+  ) {}
 
   async validateUser(
     login: string,
     password: string,
-  ):Promise<UserContextDto | null> {
-    const user = await this.usersRepository.findByLogin(login)
-    if(!user){
+  ): Promise<UserContextDto | null> {
+    const user = await this.usersRepository.findByLogin(login);
+    if (!user) {
       return null;
     }
 
     const isPasswordValid = await this.bcryptService.comparePassword({
       password: password,
       hash: user.accountData.passwordHash,
-    })
+    });
 
-    if(!isPasswordValid){
+    if (!isPasswordValid) {
       return null;
     }
 
-    return {id: user._id.toString()};
+    return { id: user._id.toString() };
   }
 
   async login(userId: string) {
-    const accessToken = this.jwtService.sign({id:userId} as UserContextDto);
+    const accessToken = this.jwtService.sign({ id: userId } as UserContextDto);
 
-    return {accessToken};
+    return { accessToken };
   }
 
-  async registration(dto: CreateUserDto){
-    const createdUserId = await this.usersService.createUser(dto)
+  async registrationConfirmation(code: string) {
+    const user = await this.usersRepository.findUserByConfirmationCode(code);
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
 
-    const confirmCode = uuidv4()
+    if (user.emailConfirmation.isConfirmed) {
+      throw new BadRequestException('User already confirmed');
+    }
 
-    const user = await this.usersRepository.findOrNotFoundFail(createdUserId)
+    if (user.emailConfirmation.confirmationCode !== code) {
+      throw new BadRequestException('Invalid confirmation code');
+    }
 
-    user.setConfirmationCode(confirmCode)
+    if (user.emailConfirmation.expirationDate < new Date()) {
+      throw new BadRequestException('Invalid confirmation code');
+    }
+
+    user.setConfirmation()
     await this.usersRepository.save(user)
+  }
+
+  async registration(dto: CreateUserDto) {
+    const createdUserId = await this.usersService.createUser(dto);
+
+    const confirmCode = uuidv4();
+
+    const user = await this.usersRepository.findOrNotFoundFail(createdUserId);
+
+    user.setConfirmationCode(confirmCode);
+    await this.usersRepository.save(user);
 
     this.emailService
       .sendConfirmationEmail(user.accountData.email, confirmCode)
-      .catch(console.error)
+      .catch(console.error);
   }
 }

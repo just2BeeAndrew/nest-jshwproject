@@ -43,6 +43,10 @@ export class User {
     this.emailConfirmation.confirmationCode = confirmationCode;
   }
 
+  setConfirmation(){
+    this.emailConfirmation.isConfirmed = true;
+  }
+
   makeDeleted() {
     if (this.accountData.deletedAt !== null) {
       throw new Error('Deleted');

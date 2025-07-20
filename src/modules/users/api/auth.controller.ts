@@ -58,8 +58,10 @@ export class AuthController {
   async newPassword() {}
 
   @Post('registration-confirmation')
-  @HttpCode(200)
-  async registrationConfirmation() {}
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async registrationConfirmation(@Body() code: string) {
+    return this.authService.registrationConfirmation(code);
+  }
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
