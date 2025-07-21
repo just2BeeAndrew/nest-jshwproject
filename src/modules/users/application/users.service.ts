@@ -24,7 +24,7 @@ export class UsersService {
       });
     }
 
-    const isLoginTaken = await this.usersRepository.isLoginTaken(dto.login);
+    const isLoginTaken = await this.usersRepository.findByLogin(dto.login);
     if (isLoginTaken) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
@@ -32,7 +32,7 @@ export class UsersService {
       });
     }
 
-    const isEmailTaken = await this.usersRepository.isEmailTaken(dto.email);
+    const isEmailTaken = await this.usersRepository.findByEmail(dto.email);
     if (isEmailTaken) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,

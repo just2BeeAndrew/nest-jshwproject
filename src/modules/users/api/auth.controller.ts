@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '../../../core/guards/bearer/jwt-auth.guard';
 import { MeViewDto } from './view-dto/me.view-dto';
 import { CreateUserInputDto } from './input-dto/create-users.input-dto';
 import { SkipThrottle, Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { PasswordRecoveryInputDto } from './input-dto/password-recovery.input-dto';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -50,8 +51,10 @@ export class AuthController {
   }
 
   @Post('password-recovery')
-  @HttpCode(200)
-  async passwordRecovvery() {}
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async passwordRecovery(@Body() body: PasswordRecoveryInputDto) {
+    return this.authService.passwordRecovery(body.email)
+  }
 
   @Post('new-password')
   @HttpCode(200)
@@ -66,7 +69,7 @@ export class AuthController {
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() body: CreateUserInputDto) {
-    return this.authService.registration(body)
+    return this.authService.registration(body);
   }
 
   @Post('registration-email-resending')
@@ -78,9 +81,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async me(
-    @ExtractUserFromRequest() user: UserContextDto,
-  ): Promise<MeViewDto> {
+  async me(@ExtractUserFromRequest() user: UserContextDto): Promise<MeViewDto> {
     return this.authQueryRepository.me(user.id);
   }
 }

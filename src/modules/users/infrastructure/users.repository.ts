@@ -26,13 +26,16 @@ export class UsersRepository {
 
     return user;
   }
+  async findUserByConfirmationCode(confirmationCode: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({'emailConfirmation.confirmationCode': confirmationCode})
+  }
 
   async findByLogin(login: string): Promise<UserDocument | null> {
     return this.UserModel.findOne({'accountData.login': login})
   }
 
-  async findUserByConfirmationCode(confirmationCode: string): Promise<UserDocument | null> {
-    return this.UserModel.findOne({'emailConfirmation.confirmationCode': confirmationCode})
+  async findByEmail(email: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({'accountData.email': email})
   }
 
   async isLoginTaken(login: string): Promise<boolean> {

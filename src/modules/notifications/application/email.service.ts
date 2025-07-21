@@ -15,6 +15,18 @@ export class EmailService {
 
     await this.sendEmail(email, 'Email confirmation', message);
   }
+
+  async sendRecoveryPasswordEmail(email: string, recoveryCode: string) {
+    const message = `
+     <h1> Password recovery</h1>
+     <p>to reset your password please follow the link bellow:</p>
+     <a href = 'https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>ЖМАК!!!</a>
+     <p>complete recovery></p>
+    `;
+
+    await this.sendEmail(email, "Password recovery", message);
+  }
+
   async sendEmail(to: string, subject: string, html: string) {
     await this.mailerService.sendMail({
       to,

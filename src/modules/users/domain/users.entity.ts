@@ -43,6 +43,10 @@ export class User {
     this.emailConfirmation.confirmationCode = confirmationCode;
   }
 
+  setRecoveryCode(recoveryCode: string) {
+    this.emailConfirmation.recoveryCode = recoveryCode;
+  }
+
   setConfirmation(){
     this.emailConfirmation.isConfirmed = true;
   }
