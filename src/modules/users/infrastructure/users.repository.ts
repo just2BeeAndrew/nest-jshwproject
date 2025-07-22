@@ -38,11 +38,7 @@ export class UsersRepository {
     return this.UserModel.findOne({'accountData.email': email})
   }
 
-  async isLoginTaken(login: string): Promise<boolean> {
-    return !!(await this.UserModel.countDocuments({'accountData.login': login}))
-  }
-
-  async isEmailTaken(email: string): Promise<boolean> {
-    return !!(await this.UserModel.countDocuments({'accountData.email': email}))
+  async findByRecoveryCode(recoveryCode: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({'emailConfirmation.recoveryCode': recoveryCode})
   }
 }

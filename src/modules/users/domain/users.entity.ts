@@ -47,6 +47,10 @@ export class User {
     this.emailConfirmation.recoveryCode = recoveryCode;
   }
 
+  setPasswordHash(hash: string) {
+    this.accountData.passwordHash = hash;
+  }
+
   setConfirmation(){
     this.emailConfirmation.isConfirmed = true;
   }

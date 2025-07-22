@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from '../../notifications/application/email.service';
 import { DomainException } from '../../../core/exceptions/domain-exception';
 import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
+import { NewPasswordDto } from '../dto/new-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -64,6 +65,21 @@ export class AuthService {
     await this.emailService
       .sendRecoveryPasswordEmail(email, recoveryCode)
       .catch(console.error);
+  }
+
+  async newPassword(dto: NewPasswordDto) {
+    const user = await this.usersRepository.findByRecoveryCode(dto.recoveryCode);
+    if (!user) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'User not found',
+      });
+    }
+
+    const newPasswordHash = await this.bcryptService.createHash(dto.newPassword);
+
+    user.setPasswordHash(newPasswordHash);
+    await this.usersRepository.save(user);
   }
 
   async registrationConfirmation(code: string) {

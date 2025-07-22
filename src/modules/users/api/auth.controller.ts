@@ -20,6 +20,7 @@ import { MeViewDto } from './view-dto/me.view-dto';
 import { CreateUserInputDto } from './input-dto/create-users.input-dto';
 import { SkipThrottle, Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { PasswordRecoveryInputDto } from './input-dto/password-recovery.input-dto';
+import { newPasswordInputDto } from './input-dto/newPassword.input-dto';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -57,8 +58,10 @@ export class AuthController {
   }
 
   @Post('new-password')
-  @HttpCode(200)
-  async newPassword() {}
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async newPassword(@Body() body: newPasswordInputDto) {
+    return this.authService.newPassword(body)
+  }
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
