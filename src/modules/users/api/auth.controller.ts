@@ -21,6 +21,7 @@ import { CreateUserInputDto } from './input-dto/create-users.input-dto';
 import { SkipThrottle, Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { PasswordRecoveryInputDto } from './input-dto/password-recovery.input-dto';
 import { newPasswordInputDto } from './input-dto/newPassword.input-dto';
+import { RegistrationEmailRsendingInputDto } from './input-dto/registration-email-rsending.input-dto';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -76,8 +77,10 @@ export class AuthController {
   }
 
   @Post('registration-email-resending')
-  @HttpCode(200)
-  async registrationEmailResending() {}
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async registrationEmailResending(@Body() body: RegistrationEmailRsendingInputDto) {
+    return this.authService.registrationEmailResending(body.email)
+  }
 
   @SkipThrottle()
   @ApiBearerAuth()

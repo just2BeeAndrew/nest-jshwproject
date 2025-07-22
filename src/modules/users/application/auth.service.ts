@@ -68,7 +68,9 @@ export class AuthService {
   }
 
   async newPassword(dto: NewPasswordDto) {
-    const user = await this.usersRepository.findByRecoveryCode(dto.recoveryCode);
+    const user = await this.usersRepository.findByRecoveryCode(
+      dto.recoveryCode,
+    );
     if (!user) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
@@ -76,7 +78,9 @@ export class AuthService {
       });
     }
 
-    const newPasswordHash = await this.bcryptService.createHash(dto.newPassword);
+    const newPasswordHash = await this.bcryptService.createHash(
+      dto.newPassword,
+    );
 
     user.setPasswordHash(newPasswordHash);
     await this.usersRepository.save(user);
@@ -128,6 +132,32 @@ export class AuthService {
 
     this.emailService
       .sendConfirmationEmail(user.accountData.email, confirmCode)
+      .catch(console.error);
+  }
+
+  async registrationEmailResending(email: string) {
+    const user = await this.usersRepository.findByEmail(email);
+    if (!user) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'User not found',
+      });
+    }
+
+    if (user.emailConfirmation.isConfirmed) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'User already confirmed',
+      });
+    }
+
+    const newConfirmationCode = uuidv4();
+
+    user.setConfirmationCode(newConfirmationCode);
+    await this.usersRepository.save(user);
+
+    this.emailService
+      .sendConfirmationEmail(email, newConfirmationCode)
       .catch(console.error);
   }
 }
