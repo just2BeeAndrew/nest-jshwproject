@@ -36,7 +36,6 @@ export class AuthController {
   @Post('login')
   @SkipThrottle()
   @HttpCode(HttpStatus.OK)
-  @UseGuards(LocalAuthGuard)
   @ApiBody({
     schema: {
       type: 'object',

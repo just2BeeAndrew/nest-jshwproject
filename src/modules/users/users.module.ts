@@ -12,11 +12,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from '../../core/guards/local/local.strategy';
 import { JwtStrategy } from '../../core/guards/bearer/jwt.strategy';
 import { ThrottlerModule, seconds, Throttle } from '@nestjs/throttler';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     BcryptModule,
+    NotificationsModule,
     JwtModule.register({
       secret: 'access-token-secret',
       signOptions: { expiresIn: '1h' },
@@ -34,6 +37,7 @@ import { ThrottlerModule, seconds, Throttle } from '@nestjs/throttler';
     UsersRepository,
     UsersQueryRepository,
     AuthService,
+    AuthQueryRepository,
     LocalStrategy,
     JwtStrategy,
   ],

@@ -125,13 +125,13 @@ export class AuthService {
 
     const confirmCode = uuidv4();
 
-    const user = await this.usersRepository.findOrNotFoundFail(createdUserId);
 
-    user.setConfirmationCode(confirmCode);
-    await this.usersRepository.save(user);
+
+    createdUserId.setConfirmationCode(confirmCode);
+    await this.usersRepository.save(createdUserId);
 
     this.emailService
-      .sendConfirmationEmail(user.accountData.email, confirmCode)
+      .sendConfirmationEmail(createdUserId.accountData.email, confirmCode)
       .catch(console.error);
   }
 

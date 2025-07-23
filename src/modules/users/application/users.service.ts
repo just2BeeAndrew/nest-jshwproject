@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModelType } from '../domain/users.entity';
+import { User, UserDocument, UserModelType } from '../domain/users.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { BcryptService } from '../../bcrypt/application/bcrypt.service';
@@ -16,13 +16,16 @@ export class UsersService {
     private bcryptService: BcryptService,
   ) {}
 
-  async createUser(dto: CreateUserDto): Promise<string> {
-    if (!(dto instanceof CreateUserDto)) {
-      throw new DomainException({
-        code: DomainExceptionCode.BadRequest,
-        message: 'Incorrect User data',
-      });
-    }
+  async AdminCreateUser(dto: CreateUserDto): Promise<string> {
+    const user = await this.createUser(dto)
+
+    user.setConfirmation()
+
+    return user._id.toString();
+
+  }
+
+  async createUser(dto: CreateUserDto): Promise<UserDocument> {
 
     const isLoginTaken = await this.usersRepository.findByLogin(dto.login);
     if (isLoginTaken) {
@@ -49,7 +52,7 @@ export class UsersService {
 
     await this.usersRepository.save(user);
 
-    return user._id.toString();
+    return user;
   }
 
   async deleteUser(id: string) {
