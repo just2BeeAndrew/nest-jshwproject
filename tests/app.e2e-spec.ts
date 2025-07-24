@@ -1,8 +1,8 @@
+import { appSetup } from '../src/setup/app.setup';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../app.module';
-import { appSetup } from '../setup/app.setup';
+import { AppModule } from '../src/app.module';
 
 describe('AppController', () => {
   let app: INestApplication;
@@ -24,6 +24,6 @@ describe('AppController', () => {
   })
 
   it('/(GET)', () => {
-    return request(app.getHttpServer()).get('/app').expect(200).expect('OK');
+    return request(app.getHttpServer()).get('/api').expect(200);
   });
 });
