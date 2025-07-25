@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
 import { UsersViewDto } from './view-dto/users.view-dto';
@@ -18,9 +17,6 @@ import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dt
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 import { BasicAuthGuard } from '../../../core/guards/basic/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
-import { DomainException } from '../../../core/exceptions/domain-exception';
-import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
-
 
 @Controller('users')
 @UseGuards(BasicAuthGuard)
@@ -33,21 +29,23 @@ export class UsersController {
 
   @Get()
   @HttpCode(200)
-  async getAllUsers(@Query() query: GetUsersQueryParams): Promise<PaginatedViewDto<UsersViewDto[]>> {
-    return this.usersQueryRepository.getAllUsers(query)
+  async getAllUsers(
+    @Query() query: GetUsersQueryParams,
+  ): Promise<PaginatedViewDto<UsersViewDto[]>> {
+    return this.usersQueryRepository.getAllUsers(query);
   }
 
   @Post()
   @HttpCode(201)
-  async createUser(@Body() body: CreateUserInputDto):Promise<UsersViewDto>{
+  async createUser(@Body() body: CreateUserInputDto): Promise<UsersViewDto> {
     const userId = await this.usersService.AdminCreateUser(body);
 
-    return this.usersQueryRepository.getByIdOrNotFoundFail(userId)
+    return this.usersQueryRepository.getByIdOrNotFoundFail(userId);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteUser(@Param('id') id: string){
-    return this.usersService.deleteUser(id)
+  async deleteUser(@Param('id') id: string) {
+    return this.usersService.deleteUser(id);
   }
 }

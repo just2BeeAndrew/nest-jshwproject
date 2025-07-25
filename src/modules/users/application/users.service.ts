@@ -59,9 +59,6 @@ export class UsersService {
     const user = await this.usersRepository.findOrNotFoundFail(id);
 
     user.makeDeleted();
-
-    console.log(user);
-
     await this.usersRepository.save(user);
   }
 }
