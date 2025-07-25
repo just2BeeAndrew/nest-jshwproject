@@ -4,19 +4,22 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpStatus,
   Param,
   Post,
-  Query, RawBodyRequest, Req, UseGuards,
+  Query,
+  UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
-import {UsersQueryRepository} from '../infrastructure/query/users.query-repository';
-import {UsersViewDto} from './view-dto/users.view-dto';
-import {UsersService} from '../application/users.service';
-import { CreateUserInputDto} from './input-dto/create-users.input-dto';
+import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
+import { UsersViewDto } from './view-dto/users.view-dto';
+import { UsersService } from '../application/users.service';
+import { CreateUserInputDto } from './input-dto/create-users.input-dto';
 import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 import { BasicAuthGuard } from '../../../core/guards/basic/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
+import { DomainException } from '../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
 
 
 @Controller('users')

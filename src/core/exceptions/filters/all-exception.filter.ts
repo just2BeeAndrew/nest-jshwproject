@@ -1,13 +1,9 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpStatus,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ErrorResponseBody } from './error-response-body';
 import * as process from 'node:process';
 import { DomainExceptionCode } from './domain-exception-codes';
+import { DomainException } from '../domain-exception';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
@@ -16,9 +12,25 @@ export class AllExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const message = exception.message || 'Unknown exception occurred.';
-    const status = HttpStatus.INTERNAL_SERVER_ERROR;
-    const responseBody = this.buildResponseBody(request.url, message);
+    let message = exception.message || 'Unknown exception occurred.';
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let code = DomainExceptionCode.InternalServerError;
+
+    if (exception instanceof DomainException) {
+      code = exception.code || DomainExceptionCode.InternalServerError;
+
+      switch (code) {
+        case DomainExceptionCode.Unauthorized:
+          status = HttpStatus.UNAUTHORIZED;
+          message = exception.message;
+          break;
+        case DomainExceptionCode.ValidationError:
+          status = HttpStatus.UNAUTHORIZED;
+          message = exception.message;
+      }
+    }
+
+    const responseBody = this.buildResponseBody(request.url, message, code);
 
     response.status(status).json(responseBody);
   }
@@ -26,6 +38,7 @@ export class AllExceptionFilter implements ExceptionFilter {
   private buildResponseBody(
     requestUrl: string,
     message: string,
+    code: DomainExceptionCode,
   ): ErrorResponseBody {
     const isProduction = process.env.NODE_ENV === 'production';
 
@@ -35,7 +48,7 @@ export class AllExceptionFilter implements ExceptionFilter {
         path: null,
         message: 'Some error occurred',
         extensions: [],
-        code: DomainExceptionCode.InternalServerError,
+        code: code,
       };
     }
 
@@ -44,7 +57,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       path: requestUrl,
       message,
       extensions: [],
-      code: DomainExceptionCode.InternalServerError,
+      code: code,
     };
   }
 }
