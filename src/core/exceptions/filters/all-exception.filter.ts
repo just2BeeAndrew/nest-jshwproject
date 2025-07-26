@@ -1,9 +1,12 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ErrorResponseBody } from './error-response-body';
-import * as process from 'node:process';
 import { DomainExceptionCode } from './domain-exception-codes';
-import { DomainException } from '../domain-exception';
+import { Extension } from '../domain-exception';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
@@ -12,56 +15,52 @@ export class AllExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    let message = exception.message || 'Unknown exception occurred.';
+    console.log(exception);
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let code = DomainExceptionCode.InternalServerError;
+    let code = exception.code;
 
-    if (exception instanceof DomainException) {
-      code = exception.code || DomainExceptionCode.InternalServerError;
+    const responseBody = this.buildResponseBody(exception.extensions);
 
-      switch (code) {
-        case DomainExceptionCode.Unauthorized:
-          status = HttpStatus.UNAUTHORIZED;
-          message = exception.message;
-          break;
-        case DomainExceptionCode.ValidationError:
-          status = HttpStatus.BAD_REQUEST;
-          message = exception.message;
-          break;
-        case DomainExceptionCode.NotFound:
-          status = HttpStatus.NOT_FOUND;
-          message = exception.message;
-      }
+    switch (code) {
+      case DomainExceptionCode.NotFound:
+        status = HttpStatus.NOT_FOUND;
+        break;
+      case DomainExceptionCode.BadRequest:
+        status = HttpStatus.BAD_REQUEST;
+        break;
+      case DomainExceptionCode.Forbidden:
+        status = HttpStatus.FORBIDDEN;
+        break;
+      case DomainExceptionCode.ValidationError:
+        status = HttpStatus.BAD_REQUEST;
+        break;
+      case DomainExceptionCode.Unauthorized:
+        status = HttpStatus.UNAUTHORIZED;
+        break;
+      case DomainExceptionCode.EmailNotConfirmed:
+        status = HttpStatus.BAD_REQUEST;
+        break;
+      case DomainExceptionCode.ConfirmationCodeExpired:
+        status = HttpStatus.BAD_REQUEST;
+        break;
+      case DomainExceptionCode.PasswordRecoveryCodeExpired:
+        status = HttpStatus.BAD_REQUEST;
+        break;
+      default:
+        status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
-
-    const responseBody = this.buildResponseBody(request.url, message, code);
 
     response.status(status).json(responseBody);
   }
 
-  private buildResponseBody(
-    requestUrl: string,
-    message: string,
-    code: DomainExceptionCode,
-  ): ErrorResponseBody {
-    const isProduction = process.env.NODE_ENV === 'production';
+  private buildResponseBody(extensions: Extension[]): {
+    errorsMessages: { message: string; field: string }[];
+  } {
+    const errorsMessages = extensions.map((ext) => ({
+      message: ext.message,
+      field: ext.key,
+    }));
 
-    if (isProduction) {
-      return {
-        timestamp: new Date().toISOString(),
-        path: null,
-        message: 'Some error occurred',
-        extensions: [],
-        code: code,
-      };
-    }
-
-    return {
-      timestamp: new Date().toISOString(),
-      path: requestUrl,
-      message,
-      extensions: [],
-      code: code,
-    };
+    return { errorsMessages };
   }
 }

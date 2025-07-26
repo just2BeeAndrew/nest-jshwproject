@@ -17,21 +17,21 @@ export class UsersService {
   ) {}
 
   async AdminCreateUser(dto: CreateUserDto): Promise<string> {
-    const user = await this.createUser(dto)
+    const user = await this.createUser(dto);
 
-    user.setConfirmation()
+    user.setConfirmation();
+    await this.usersRepository.save(user);
 
     return user._id.toString();
-
   }
 
   async createUser(dto: CreateUserDto): Promise<UserDocument> {
-
     const isLoginTaken = await this.usersRepository.findByLogin(dto.login);
     if (isLoginTaken) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'Login already taken ',
+        message: 'Bad Request ',
+        extensions: [{ message: 'Login already taken', key: 'login' }],
       });
     }
 
@@ -39,7 +39,8 @@ export class UsersService {
     if (isEmailTaken) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'Email already taken ',
+        message: 'Bad Requiest ',
+        extensions: [{ message: 'Email already taken', key: 'email' }],
       });
     }
 
