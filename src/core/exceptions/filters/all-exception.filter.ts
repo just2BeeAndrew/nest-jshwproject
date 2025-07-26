@@ -25,7 +25,7 @@ export class AllExceptionFilter implements ExceptionFilter {
           message = exception.message;
           break;
         case DomainExceptionCode.ValidationError:
-          status = HttpStatus.UNAUTHORIZED;
+          status = HttpStatus.BAD_REQUEST;
           message = exception.message;
           break;
         case DomainExceptionCode.NotFound:
