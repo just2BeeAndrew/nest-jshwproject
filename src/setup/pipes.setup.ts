@@ -26,12 +26,11 @@ export const errorFormatter = (
           message: error.constraints[key]
             ? `${error.constraints[key]}; Received value: ${error?.value}`
             : '',
-          field: error.property,
+          key: error.property,
         });
       }
     }
   }
-  console.log(errorsForResponse);
   return errorsForResponse;
 };
 
