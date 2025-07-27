@@ -96,28 +96,32 @@ export class AuthService {
     if (!user) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'User not found',
+        message: 'Not found',
+        extensions: [{ message: 'User not found', key: 'code' }],
       });
     }
 
     if (user.emailConfirmation.isConfirmed) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'User already confirmed',
+        message: "Bad Request",
+        extensions: [{ message: 'User already confirmed', key: 'isConfirmed' }],
       });
     }
 
     if (user.emailConfirmation.confirmationCode !== code) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'Invalid confirmation code',
+        message: 'Bad Request',
+        extensions: [{ message: 'Invalid confirmation code', key: 'code' }],
       });
     }
 
     if (user.emailConfirmation.expirationDate < new Date()) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'Invalid confirmation code',
+        message: 'Bad Request',
+        extensions: [{ message: 'Invalid expiration date', key: 'expirationDate' }],
       });
     }
 
