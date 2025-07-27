@@ -19,10 +19,12 @@ export const emailConstants = {
   match: /^[\w.-]+@([\w-]+\.)+[\w-]{2,}$/,
 }
 
-@Schema()
+@Schema({versionKey: false})
 export class User {
   @Prop({ schema: AccountData })
   accountData: AccountData;
+
+  @Prop({ schema: EmailConfirmation })
   emailConfirmation: EmailConfirmation;
 
   static createInstance(dto: CreateUserDomainDto): UserDocument {

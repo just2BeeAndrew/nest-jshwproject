@@ -1,6 +1,6 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, _id: false })
 export class AccountData {
   @Prop({ type: String, required: true, unique: true })
   login: string;
