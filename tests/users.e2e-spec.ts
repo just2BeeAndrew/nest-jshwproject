@@ -17,10 +17,7 @@ describe('users', () => {
   let usersTestManager: UsersTestManager;
   let connection: Connection;
 
-  beforeAll(async () => {
-
-
-  })
+  beforeAll(async () => {});
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -30,7 +27,7 @@ describe('users', () => {
     appSetup(app);
     await app.init();
 
-    usersTestManager = new UsersTestManager(app)
+    usersTestManager = new UsersTestManager(app);
 
     connection = moduleFixture.get<Connection>(getConnectionToken());
 
@@ -68,13 +65,22 @@ describe('users', () => {
       .auth('admin', 'qwerty')
       .expect(HttpStatus.OK)) as { body: PaginatedViewDto<UsersViewDto> };
 
-    console.log(PaginatedViewDto<UsersViewDto>);
     expect(responseBody.totalCount).toBe(12);
     expect(responseBody.items).toHaveLength(2);
     expect(responseBody.pagesCount).toBe(2);
     expect(responseBody.items[1]).toEqual(users[users.length - 1]);
   });
 
+  it('should delete user', async () => {
+    const body: CreateUserInputDto = {
+      login: 'string',
+      password: 'string',
+      email: 'example@example.com',
+    };
+    const user = await usersTestManager.createUser(body);
+    const response = await request(app.getHttpServer())
+      .delete(`/${GLOBAL_PREFIX}/users/${user.id}`)
+      .auth('admin', 'qwerty')
+      .expect(HttpStatus.NO_CONTENT);
+  });
 });
-
-
