@@ -9,18 +9,18 @@ import { DomainExceptionCode } from '../../exceptions/filters/domain-exception-c
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(private authService: AuthService) {
-    super({ usernameField: 'login' });
+    super({ usernameField: 'loginOrEmail' });
   }
 
-  async validate(login: string, password: string): Promise<UserContextDto> {
-    const user = await this.authService.validateUser(login, password);
+  async validate(loginOrEmail: string, password: string): Promise<UserContextDto> {
+    const user = await this.authService.validateUser(loginOrEmail, password);
     if (!user) {
       throw new DomainException({
         code: DomainExceptionCode.Unauthorized,
         message: 'Invalid login or password',
+        extensions: []
       });
     }
-
     return user;
   }
 }

@@ -36,11 +36,12 @@ export class AuthController {
   @Post('login')
   @SkipThrottle()
   @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        login: { type: 'string', example: 'login123' },
+        loginOrEmail: { type: 'string', example: 'login123' },
         password: { type: 'string', example: 'superpassword' },
       },
     },
