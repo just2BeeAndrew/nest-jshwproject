@@ -26,6 +26,7 @@ export class AuthService {
     password: string,
   ): Promise<UserContextDto | null> {
     const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail);
+    console.log(user);
     if (!user) {
       return null;
     }
