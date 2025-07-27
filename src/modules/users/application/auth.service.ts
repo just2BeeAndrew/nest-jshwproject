@@ -26,7 +26,6 @@ export class AuthService {
     password: string,
   ): Promise<UserContextDto | null> {
     const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail);
-    console.log(user);
     if (!user) {
       return null;
     }
@@ -105,7 +104,7 @@ export class AuthService {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
         message: "Bad Request",
-        extensions: [{ message: 'User already confirmed', key: 'isConfirmed' }],
+        extensions: [{ message: 'User already confirmed', key: 'code' }],
       });
     }
 
@@ -149,14 +148,16 @@ export class AuthService {
     if (!user) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'User not found',
+        message: 'Not found',
+        extensions: [{ message: 'User not found', key: 'email' }],
       });
     }
 
     if (user.emailConfirmation.isConfirmed) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'User already confirmed',
+        message: 'Bad Request',
+        extensions: [{ message: 'User already confirmed', key: 'email' }],
       });
     }
 

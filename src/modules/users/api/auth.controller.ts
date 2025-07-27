@@ -22,6 +22,7 @@ import { SkipThrottle, Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { PasswordRecoveryInputDto } from './input-dto/password-recovery.input-dto';
 import { newPasswordInputDto } from './input-dto/newPassword.input-dto';
 import { RegistrationEmailRsendingInputDto } from './input-dto/registration-email-rsending.input-dto';
+import { RegistrationConfirmationCodeInputDto } from './input-dto/confirmation-code.input-dto';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -66,8 +67,8 @@ export class AuthController {
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registrationConfirmation(@Body() code: string) {
-    return this.authService.registrationConfirmation(code);
+  async registrationConfirmation(@Body() code: RegistrationConfirmationCodeInputDto) {
+    return this.authService.registrationConfirmation(code.code);
   }
 
   @Post('registration')
