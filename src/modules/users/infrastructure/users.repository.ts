@@ -48,6 +48,10 @@ export class UsersRepository {
     return this.UserModel.findOne({ 'accountData.email': email });
   }
 
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({$or: [{'accountData.login': loginOrEmail}, {'accountData.email': loginOrEmail}]})
+  }
+
   async findByRecoveryCode(recoveryCode: string): Promise<UserDocument | null> {
     return this.UserModel.findOne({
       'emailConfirmation.recoveryCode': recoveryCode,
