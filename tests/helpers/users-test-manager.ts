@@ -4,6 +4,7 @@ import { UsersViewDto } from '../../src/modules/users/api/view-dto/users.view-dt
 import request from 'supertest';
 import { GLOBAL_PREFIX } from '../../src/setup/global-prefix.setup';
 import { delay } from './delay';
+import { MeViewDto } from '../../src/modules/users/api/view-dto/me.view-dto';
 
 export class UsersTestManager {
   constructor(private app: INestApplication) {}
@@ -34,5 +35,44 @@ export class UsersTestManager {
       usersPromises.push(response);
     }
     return Promise.all(usersPromises);
+  }
+
+  async login(
+    loginOrEmail: string,
+    password: string,
+    statusCode: number = HttpStatus.OK,
+  ): Promise<{ accessToken: string }> {
+    const response = await request(this.app.getHttpServer())
+      .post(`/${GLOBAL_PREFIX}/auth/login`)
+      .send({ loginOrEmail, password })
+      .expect(statusCode);
+
+    return {
+      accessToken: response.body.accessToken,
+    };
+  }
+
+  async me(
+    accessToken: string,
+    statusCode: number = HttpStatus.OK,
+  ): Promise<MeViewDto> {
+    const response = await request(this.app.getHttpServer())
+      .get(`/${GLOBAL_PREFIX}/auth/me`)
+      .auth(accessToken, { type: 'bearer' })
+      .expect(statusCode);
+
+    return response.body;
+  }
+
+  async createAndLoginSeveralUsers(
+    count: number,
+  ): Promise<{ accessToken: string }[]> {
+    const users = await this.createSeveralUsers(count);
+
+    const loginPromises = users.map((user: UsersViewDto) =>
+      this.login(user.login, '123456789'),
+    );
+
+    return await Promise.all(loginPromises);
   }
 }
