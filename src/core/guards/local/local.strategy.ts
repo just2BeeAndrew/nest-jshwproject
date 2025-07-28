@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from '../../../modules/users/application/auth.service';
-import { UserContextDto } from '../../../modules/users/guards/dto/user-context.dto';
+import { UserContextDto } from '../../dto/user-context.dto';
 import { DomainException } from '../../exceptions/domain-exception';
 import { DomainExceptionCode } from '../../exceptions/filters/domain-exception-codes';
 

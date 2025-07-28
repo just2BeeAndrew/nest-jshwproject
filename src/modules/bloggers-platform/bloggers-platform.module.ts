@@ -14,6 +14,12 @@ import { PostsController } from './posts/api/posts.controller';
 import { Comment, CommentSchema } from './comments/domain/comments.entity';
 import { CommentsQueryRepository } from './comments/infrastructure/query/comments.query-repository';
 import { BcryptModule } from '../bcrypt/bcrypt.module';
+import { CommentsService } from './comments/application/comments.service';
+import { LikeStatusUseСase } from './comments/application/usecases/like-status.usecase';
+
+const useCases = [
+  LikeStatusUseСase
+]
 
 @Module({
   imports: [
@@ -33,6 +39,8 @@ import { BcryptModule } from '../bcrypt/bcrypt.module';
     PostsRepository,
     PostsQueryRepository,
     CommentsQueryRepository,
+    CommentsService,
+    ...useCases,
   ],
   exports: [MongooseModule],
 })
