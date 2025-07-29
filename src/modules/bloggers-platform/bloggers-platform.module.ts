@@ -16,6 +16,8 @@ import { CommentsQueryRepository } from './comments/infrastructure/query/comment
 import { BcryptModule } from '../bcrypt/bcrypt.module';
 import { CommentsService } from './comments/application/comments.service';
 import { LikeStatusUseСase } from './comments/application/usecases/like-status.usecase';
+import { CqrsModule } from '@nestjs/cqrs';
+import { CommentsRepository } from './comments/infrastructure/comments.repository';
 
 const useCases = [
   LikeStatusUseСase
@@ -29,6 +31,7 @@ const useCases = [
       { name: Comment.name, schema: CommentSchema },
     ]),
     BcryptModule,
+    CqrsModule,
   ],
   controllers: [BlogsController, PostsController, CommentsController],
   providers: [
@@ -38,7 +41,10 @@ const useCases = [
     PostsService,
     PostsRepository,
     PostsQueryRepository,
+    CommentsService,
+    CommentsRepository,
     CommentsQueryRepository,
+
     CommentsService,
     ...useCases,
   ],

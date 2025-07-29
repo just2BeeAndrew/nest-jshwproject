@@ -11,7 +11,7 @@ import { AuthService } from './application/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from '../../core/guards/local/local.strategy';
 import { JwtStrategy } from '../../core/guards/bearer/jwt.strategy';
-import { ThrottlerModule, seconds, Throttle } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 
