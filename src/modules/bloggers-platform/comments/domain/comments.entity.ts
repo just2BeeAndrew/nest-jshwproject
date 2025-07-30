@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
+import { LikeStatus } from '../../../../core/dto/like-status';
 
 @Schema()
 export class CommentatorInfoType {

@@ -1,12 +1,7 @@
 import { IsEnum } from 'class-validator';
-
-enum LikesStatus {
-  'Like' = 'Like',
-  'Dislike' = 'Dislike',
-  'None' = 'None',
-}
+import {LikeStatus} from '../../../../../core/dto/like-status';
 
 export class LikesStatusDto {
-  @IsEnum(LikesStatus)
-  likesStatus: LikesStatus;
+  @IsEnum(LikeStatus)
+  likesStatus: LikeStatus;
 }
