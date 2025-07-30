@@ -15,7 +15,7 @@ export class CommentsService {
     likeStatus: LikesStatusDto,
   ) {
     return this.commandBus.execute(
-      new LikeStatusCommand(userId, commentId, likeStatus),
+      new LikeStatusCommand(userId, commentId, likeStatus.likesStatus),
     );
   }
 }
