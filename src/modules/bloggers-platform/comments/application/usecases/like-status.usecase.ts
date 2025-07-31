@@ -1,12 +1,12 @@
 import { CommentsRepository } from '../../infrastructure/comments.repository';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DomainException } from '../../../../../core/exceptions/domain-exception';
 import { DomainExceptionCode } from '../../../../../core/exceptions/filters/domain-exception-codes';
 import { LikeStatus } from '../../../../../core/dto/like-status';
-import { HttpStatus } from '@nestjs/common';
 import { StatusRepository } from '../../infrastructure/status.repository';
 import { Status, StatusModelType } from '../../domain/status.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { CalculateStatusCountCommand } from './calculate-status-count.usecase';
 
 export class LikeStatusCommand {
   constructor(
@@ -20,6 +20,7 @@ export class LikeStatusCommand {
 export class LikeStatusUseСase implements ICommandHandler<LikeStatusCommand> {
   constructor(
     @InjectModel(Status.name) private StatusModel: StatusModelType,
+    private commandBus: CommandBus,
     private commentsRepository: CommentsRepository,
     private statusRepository: StatusRepository,
   ) {}
@@ -40,24 +41,40 @@ export class LikeStatusUseСase implements ICommandHandler<LikeStatusCommand> {
       command.userId,
       command.commentId,
     );
-    const currentStatus = existingStatus?.status ?? LikeStatus.None;
+    const currentStatus = existingStatus
+      ? existingStatus.status
+      : LikeStatus.None;
 
     if (existingStatus) {
       if (existingStatus.status === command.newStatus) {
-        return HttpStatus.NO_CONTENT;
+        return;
       } else {
         existingStatus.setStatus(command.newStatus);
         await this.statusRepository.save(existingStatus);
       }
     } else if (command.newStatus !== LikeStatus.None) {
-      const status = await this.StatusModel.create({
+      const status = this.StatusModel.createInstance({
         userId: command.userId,
-        commentId:command.commentId,
-        status:command.newStatus,
+        commentId: command.commentId,
+        status: command.newStatus,
       });
-      await this.statusRepository.save(status)
+      await this.statusRepository.save(status);
     }
 
+    const updatedCounts =
+      await this.commandBus.execute<CalculateStatusCountCommand>(
+        new CalculateStatusCountCommand(
+          comment.likesInfo.likesCount,
+          comment.likesInfo.dislikesCount,
+          currentStatus,
+          command.newStatus,
+        ),
+      );
 
+    comment.setStatusCounters(
+      updatedCounts.likesCount,
+      updatedCounts.dislikesCount,
+    );
+    await this.commentsRepository.save(comment);
   }
 }
