@@ -3,11 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
+  HttpCode, HttpStatus,
   Param,
   Post,
   Put,
-  Query,
+  Query, UseGuards,
 } from '@nestjs/common';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
@@ -17,12 +17,18 @@ import { CreatePostsInputDto } from './input-dto/create-posts.input-dto';
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { UpdatePostsInputDto } from './input-dto/update-posts.input-dto';
 import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query-repository';
+import { JwtAuthGuard } from '../../../../core/guards/bearer/jwt-auth.guard';
+import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
+import { UserContextDto } from '../../../../core/dto/user-context.dto';
+import { CreateCommentInputDto } from '../../comments/api/input-dto/create-comment.input-dto';
+import { CommentsService } from '../../comments/application/comments.service';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
     private postsQueryRepository: PostsQueryRepository,
+    private commentsService: CommentsService,
     private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
@@ -32,6 +38,14 @@ export class PostsController {
   @HttpCode(200)
   async getCommentsByPostId(@Param('postId') postId: string) {
     return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(postId)
+  }
+
+  @Post(':postId/comments')
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard)
+  async createComment(@ExtractUserFromRequest() user: UserContextDto,@Param('postId') postId: string, body: CreateCommentInputDto) {
+    return this.commentsService.createComment(user.id, postId, body);
+
   }
 
   @Get(':id')

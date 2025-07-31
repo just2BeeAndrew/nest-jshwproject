@@ -18,10 +18,19 @@ import { CommentsService } from './comments/application/comments.service';
 import { LikeStatusUseСase } from './comments/application/usecases/like-status.usecase';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CommentsRepository } from './comments/infrastructure/comments.repository';
+import {
+  CalculateStatusCountCommand,
+  CalculateStatusCountUseCase,
+} from './comments/application/usecases/calculate-status-count.usecase';
+import { Status, StatusSchema } from './comments/domain/status.entity';
+import { StatusRepository } from './comments/infrastructure/status.repository';
+import { CreateCommandUseCase } from './comments/application/usecases/create-coment.usecase';
 
 const useCases = [
-  LikeStatusUseСase
-]
+  LikeStatusUseСase,
+  CalculateStatusCountUseCase,
+  CreateCommandUseCase,
+];
 
 @Module({
   imports: [
@@ -29,6 +38,7 @@ const useCases = [
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
       { name: Comment.name, schema: CommentSchema },
+      { name: Status.name, schema: StatusSchema },
     ]),
     BcryptModule,
     CqrsModule,
@@ -44,6 +54,7 @@ const useCases = [
     CommentsService,
     CommentsRepository,
     CommentsQueryRepository,
+    StatusRepository,
 
     CommentsService,
     ...useCases,
