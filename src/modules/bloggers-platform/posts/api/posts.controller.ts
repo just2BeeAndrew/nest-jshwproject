@@ -22,10 +22,13 @@ import { ExtractUserFromRequest } from '../../../../core/decorators/param/extrac
 import { UserContextDto } from '../../../../core/dto/user-context.dto';
 import { CreateCommentInputDto } from '../../comments/api/input-dto/create-comment.input-dto';
 import { CommentsService } from '../../comments/application/comments.service';
+import { QueryBus } from '@nestjs/cqrs';
+import { GetCommentByIdQuery } from '../../comments/application/queries/get-comments-by-id.query-handler';
 
 @Controller('posts')
 export class PostsController {
   constructor(
+    private queryBus: QueryBus,
     private postsService: PostsService,
     private postsQueryRepository: PostsQueryRepository,
     private commentsService: CommentsService,
@@ -43,9 +46,9 @@ export class PostsController {
   @Post(':postId/comments')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
-  async createComment(@ExtractUserFromRequest() user: UserContextDto,@Param('postId') postId: string, body: CreateCommentInputDto) {
-    return this.commentsService.createComment(user.id, postId, body);
-
+  async createComment(@ExtractUserFromRequest() user: UserContextDto,@Param('postId') postId: string,@Body() body: CreateCommentInputDto) {
+    const comment = await this.commentsService.createComment(user.id, postId, body);
+    return this.queryBus.execute(new GetCommentByIdQuery(comment));
   }
 
   @Get(':id')

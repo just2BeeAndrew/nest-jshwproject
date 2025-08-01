@@ -14,7 +14,7 @@ export class CommentsService {
     postId: string,
     content: CreateCommentInputDto,
   ): Promise<string> {
-    return this.commandBus.execute<CreateCommentCommand>(
+    return this.commandBus.execute<CreateCommentCommand,string>(
       new CreateCommentCommand(userId, postId, content.content),
     );
   }

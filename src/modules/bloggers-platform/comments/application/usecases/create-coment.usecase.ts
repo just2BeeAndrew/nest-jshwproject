@@ -27,6 +27,7 @@ export class CreateCommandUseCase
   ) {}
 
   async execute(command: CreateCommentCommand) {
+    console.log(command);
     const user = await this.usersRepository.findById(command.userId);
     if (!user) {
       throw new DomainException({

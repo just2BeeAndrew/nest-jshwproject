@@ -25,12 +25,16 @@ import {
 import { Status, StatusSchema } from './comments/domain/status.entity';
 import { StatusRepository } from './comments/infrastructure/status.repository';
 import { CreateCommandUseCase } from './comments/application/usecases/create-coment.usecase';
+import { UsersModule } from '../users/users.module';
+import { GetCommentByIdQueryHandler } from './comments/application/queries/get-comments-by-id.query-handler';
 
 const useCases = [
   LikeStatusUseСase,
   CalculateStatusCountUseCase,
   CreateCommandUseCase,
 ];
+
+const query = [GetCommentByIdQueryHandler]
 
 @Module({
   imports: [
@@ -42,6 +46,7 @@ const useCases = [
     ]),
     BcryptModule,
     CqrsModule,
+    UsersModule,
   ],
   controllers: [BlogsController, PostsController, CommentsController],
   providers: [
@@ -58,6 +63,7 @@ const useCases = [
 
     CommentsService,
     ...useCases,
+    ...query,
   ],
   exports: [MongooseModule],
 })
