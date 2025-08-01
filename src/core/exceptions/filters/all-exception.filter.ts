@@ -15,6 +15,8 @@ export class AllExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    console.error(exception);
+
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let code = exception.code;
 
@@ -52,10 +54,12 @@ export class AllExceptionFilter implements ExceptionFilter {
     response.status(status).json(responseBody);
   }
 
-  private buildResponseBody(extensions: Extension[]): {
+  private buildResponseBody(extensions?: Extension[]): {
     errorsMessages: { message: string; field: string }[];
   } {
-    const errorsMessages = extensions.map((ext) => ({
+    const safeExtensions = Array.isArray(extensions) ? extensions : [];
+
+    const errorsMessages = safeExtensions.map((ext) => ({
       message: ext.message,
       field: ext.key,
     }));

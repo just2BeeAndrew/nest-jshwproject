@@ -41,6 +41,6 @@ import { AuthQueryRepository } from './infrastructure/query/auth.query-repositor
     LocalStrategy,
     JwtStrategy,
   ],
-  exports: [UsersService, MongooseModule],
+  exports: [UsersService,UsersRepository, MongooseModule],
 })
 export class UsersModule {}

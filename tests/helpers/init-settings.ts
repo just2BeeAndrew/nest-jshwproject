@@ -7,6 +7,7 @@ import { Connection } from 'mongoose';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { UsersTestManager } from './users-test-manager';
 import { deleteAllData } from './delete-all-data';
+import { BlogersPlatformTestManager } from './blogers-platform-test-manager';
 
 export const initSettings = async (
   addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,
