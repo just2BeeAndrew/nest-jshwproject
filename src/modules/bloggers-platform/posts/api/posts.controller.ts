@@ -21,17 +21,17 @@ import { JwtAuthGuard } from '../../../../core/guards/bearer/jwt-auth.guard';
 import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../../../core/dto/user-context.dto';
 import { CreateCommentInputDto } from '../../comments/api/input-dto/create-comment.input-dto';
-import { CommentsService } from '../../comments/application/comments.service';
-import { QueryBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comments-by-id.query-handler';
+import { CreateCommentCommand } from '../../comments/application/usecases/create-coment.usecase';
 
 @Controller('posts')
 export class PostsController {
   constructor(
+    private commandBus: CommandBus,
     private queryBus: QueryBus,
     private postsService: PostsService,
     private postsQueryRepository: PostsQueryRepository,
-    private commentsService: CommentsService,
     private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
@@ -47,7 +47,7 @@ export class PostsController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
   async createComment(@ExtractUserFromRequest() user: UserContextDto,@Param('postId') postId: string,@Body() body: CreateCommentInputDto) {
-    const comment = await this.commentsService.createComment(user.id, postId, body);
+    const comment = await this.commandBus.execute<CreateCommentCommand>(new CreateCommentCommand(user.id,postId,body.content));
     return this.queryBus.execute(new GetCommentByIdQuery(comment));
   }
 

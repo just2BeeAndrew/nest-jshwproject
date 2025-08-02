@@ -6,10 +6,13 @@ import { JwtAuthGuard } from '../../../../core/guards/bearer/jwt-auth.guard';
 import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../../../core/dto/user-context.dto';
 import { CommentsService } from '../application/comments.service';
+import { CommandBus } from '@nestjs/cqrs';
+import { LikeStatusCommand } from '../application/usecases/like-status.usecase';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
+    private readonly commandBus: CommandBus,
     private commentsQueryRepository: CommentsQueryRepository,
     private commentsService: CommentsService,
   ) {}
@@ -24,6 +27,6 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   async likeStatus (@ExtractUserFromRequest() user: UserContextDto, @Param('commentId') commentId: string, @Body() likeStatus: LikesStatusDto) {
-    return this.commentsService.likeStatus(user.id, commentId, likeStatus);
+    return await this.commandBus.execute<LikeStatusCommand>(new LikeStatusCommand(user.id,commentId,likeStatus.likesStatus) )
   }
 }
