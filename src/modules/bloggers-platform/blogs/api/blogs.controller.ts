@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Put, Delete, HttpCode, Query, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  HttpCode,
+  Query,
+  Body,
+  Param,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { BlogsService } from '../application/blogs.service';
 import { BlogsQueryRepository } from '../infrastructure/query/blogs.query-repository';
 import { GetBlogsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
@@ -11,10 +23,17 @@ import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from '../../posts/api/input-dto/get-posts-query-params.input-dto';
 import { PostsViewDto } from '../../posts/api/view-dto/posts.view-dto';
+import { BasicAuthGuard } from '../../../../core/guards/basic/basic-auth.guard';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query-handler';
+import { CreateBlogCommand } from '../application/usecases/create-blog.usecase';
+import { CreateCommentCommand } from '../../comments/application/usecases/create-coment.usecase';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private blogsService: BlogsService,
     private postsService: PostsService,
     private blogsQueryRepository: BlogsQueryRepository,
@@ -28,11 +47,12 @@ export class BlogsController {
   }
 
   @Post()
-  @HttpCode(201)
+  @UseGuards(BasicAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
   async createBlog(@Body() body: CreateBlogInputDto)/*:Promise<BlogsViewDto>*/ {
-    const blogId = await this.blogsService.createBlog(body);
+    const blogId = await this.commandBus.execute<CreateBlogCommand,string>(new CreateBlogCommand(body));
 
-    return this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
+    return this.queryBus.execute(new GetBlogByIdQuery(blogId));
   }
 
   @Get(':blogId/posts')

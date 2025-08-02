@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
+  HttpCode, HttpStatus,
   Param,
   Post,
   Query,
@@ -28,7 +28,7 @@ export class UsersController {
   ) {}
 
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async getAllUsers(
     @Query() query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UsersViewDto[]>> {
@@ -36,7 +36,7 @@ export class UsersController {
   }
 
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   async createUser(@Body() body: CreateUserInputDto): Promise<UsersViewDto> {
     const userId = await this.usersService.AdminCreateUser(body);
 
@@ -44,7 +44,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string) {
     return this.usersService.deleteUser(id);
   }
