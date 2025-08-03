@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -19,6 +20,7 @@ import { LikeStatusCommand } from '../application/usecases/like-status.usecase';
 import { Public } from '../../../../core/decorators/public.decorator';
 import { UpdateCommentInputDto } from './input-dto/update-comment.input-dto';
 import { UpdateCommentCommand } from '../application/usecases/update-comment.usecase';
+import { DeleteCommentCommand } from '../application/usecases/delete-comment.usecase';
 
 @UseGuards(JwtAuthGuard)
 @Controller('comments')
@@ -29,7 +31,8 @@ export class CommentsController {
   ) {}
 
   @Get(':id')
-  @HttpCode(200)
+  @Public()
+  @HttpCode(HttpStatus.OK)
   async getCommentById(@Param('id') id: string): Promise<CommentsViewDto> {
     return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(id);
   }
@@ -55,6 +58,17 @@ export class CommentsController {
   ) {
     return await this.commandBus.execute<UpdateCommentCommand>(
       new UpdateCommentCommand(user.id, commentId, body.content),
+    );
+  }
+
+  @Delete(':commentId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteComment(
+    @ExtractUserFromRequest() user: UserContextDto,
+    @Param('commentId') commentId: string,
+  ) {
+    return await this.commandBus.execute<DeleteCommentCommand>(
+      new DeleteCommentCommand(user.id, commentId),
     );
   }
 }

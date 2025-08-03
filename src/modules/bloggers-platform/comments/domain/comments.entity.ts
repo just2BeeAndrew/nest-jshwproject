@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateCommentDomainDto } from './dto/create-comment.domain.dto';
+import { DomainException } from '../../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../../core/exceptions/filters/domain-exception-codes';
 
 export const commentConstant = {
   minLength: 20,
@@ -14,6 +16,9 @@ export class CommentatorInfoType {
 
   @Prop({ type: String, required: true })
   userLogin: string;
+
+  @Prop({ type: Date, nullable: true })
+  deletedAt: Date;
 
   static create(userId: string, userLogin: string): CommentatorInfoType {
     const data = new this();
@@ -72,6 +77,21 @@ export class Comment {
 
   setComment(content: string) {
     this.content = content;
+  }
+
+  softDelete() {
+    if (this.deletedAt !== null) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Bad Request',
+        extensions: [{ message: 'deleted', key: 'deletedAt' }],
+      });
+    }
+    this.deletedAt = new Date();
+  }
+
+  static async clean(this: CommentModelType) {
+    await this.deleteMany({});
   }
 }
 
