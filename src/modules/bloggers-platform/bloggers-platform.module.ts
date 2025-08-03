@@ -14,27 +14,25 @@ import { PostsController } from './posts/api/posts.controller';
 import { Comment, CommentSchema } from './comments/domain/comments.entity';
 import { CommentsQueryRepository } from './comments/infrastructure/query/comments.query-repository';
 import { BcryptModule } from '../bcrypt/bcrypt.module';
-import { CommentsService } from './comments/application/comments.service';
 import { LikeStatusUseСase } from './comments/application/usecases/like-status.usecase';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CommentsRepository } from './comments/infrastructure/comments.repository';
-import {
-  CalculateStatusCountCommand,
-  CalculateStatusCountUseCase,
-} from './comments/application/usecases/calculate-status-count.usecase';
+import { CalculateStatusCountUseCase } from './comments/application/usecases/calculate-status-count.usecase';
 import { Status, StatusSchema } from './comments/domain/status.entity';
 import { StatusRepository } from './comments/infrastructure/status.repository';
 import { CreateCommandUseCase } from './comments/application/usecases/create-coment.usecase';
 import { UsersModule } from '../users/users.module';
 import { GetCommentByIdQueryHandler } from './comments/application/queries/get-comments-by-id.query-handler';
+import { UpdateCommentUseCase } from './comments/application/usecases/update-comment.usecase';
 
 const useCases = [
   LikeStatusUseСase,
   CalculateStatusCountUseCase,
   CreateCommandUseCase,
+  UpdateCommentUseCase,
 ];
 
-const query = [GetCommentByIdQueryHandler]
+const query = [GetCommentByIdQueryHandler];
 
 @Module({
   imports: [
@@ -56,12 +54,9 @@ const query = [GetCommentByIdQueryHandler]
     PostsService,
     PostsRepository,
     PostsQueryRepository,
-    CommentsService,
     CommentsRepository,
     CommentsQueryRepository,
     StatusRepository,
-
-    CommentsService,
     ...useCases,
     ...query,
   ],
