@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { LikeStatus } from '../../../../core/dto/like-status';
 import { CreateCommentDomainDto } from './dto/create-comment.domain.dto';
 
 export const commentConstant = {
@@ -69,6 +68,10 @@ export class Comment {
   setStatusCounters(likesCount: number, dislikesCount: number) {
     this.likesInfo.likesCount = likesCount;
     this.likesInfo.dislikesCount = dislikesCount;
+  }
+
+  setComment(content: string) {
+    this.content = content;
   }
 }
 
