@@ -3,6 +3,8 @@ import { HydratedDocument, Model } from 'mongoose';
 import { AccountData } from './accountData.schema';
 import { CreateUserDomainDto } from './dto/create-user.domain.dto';
 import { EmailConfirmation } from './emailConfirmation.schema';
+import { DomainException } from '../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
 
 export const loginConstants = {
   minLength: 3,
@@ -59,7 +61,11 @@ export class User {
 
   makeDeleted() {
     if (this.accountData.deletedAt !== null) {
-      throw new Error('Deleted');
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Bad Request',
+        extensions:[{message: 'deleted', key: 'deletedAt'}],
+      });
     }
     this.accountData.deletedAt = new Date();
   }

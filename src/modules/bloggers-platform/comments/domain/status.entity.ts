@@ -15,15 +15,20 @@ export class Status {
   status: LikeStatus;
 
   static createInstance(dto: CreateStatusDomainDto): StatusDocument {
-    const status = new this()
-    status.userId = dto.userId
-    status.commentId = dto.commentId
-    status.status = dto.status
+    const status = new this();
+    status.userId = dto.userId;
+    status.commentId = dto.commentId;
+    status.status = dto.status;
 
-    return status as StatusDocument
+    return status as StatusDocument;
   }
+
   setStatus(status: LikeStatus) {
     this.status = status;
+  }
+
+  static async clean(this: StatusModelType) {
+    await this.deleteMany({});
   }
 }
 
