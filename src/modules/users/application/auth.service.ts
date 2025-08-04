@@ -16,7 +16,6 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private usersRepository: UsersRepository,
-    private jwtService: JwtService,
     private bcryptService: BcryptService,
     private emailService: EmailService,
   ) {}
@@ -46,11 +45,6 @@ export class AuthService {
     return { id: user._id.toString() };
   }
 
-  async login(userId: string) {
-    const accessToken = this.jwtService.sign({ id: userId } as UserContextDto);
-
-    return { accessToken };
-  }
 
   async passwordRecovery(email: string) {
     const user = await this.usersRepository.findByEmail(email);
