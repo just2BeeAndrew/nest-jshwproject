@@ -8,28 +8,33 @@ import { UsersQueryRepository } from './infrastructure/query/users.query-reposit
 import { BcryptModule } from '../bcrypt/bcrypt.module';
 import { AuthController } from './api/auth.controller';
 import { AuthService } from './application/auth.service';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { LocalStrategy } from '../../core/guards/local/local.strategy';
 import { JwtStrategy } from '../../core/guards/bearer/jwt.strategy';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
+import {
+  ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
+  REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
+} from '../../core/constants/auth-tokens.inject-constants';
+import { LoginUseCase } from './application/usecases/login.usecases';
+import { CqrsModule } from '@nestjs/cqrs';
+
+const useCases = [LoginUseCase]
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     BcryptModule,
     NotificationsModule,
-    JwtModule.register({
-      secret: 'access-token-secret',
-      signOptions: { expiresIn: '1h' },
-    }),
     ThrottlerModule.forRoot([
       {
         ttl: 10_000,
         limit: 5,
       },
     ]),
+    CqrsModule
   ],
   controllers: [UsersController, AuthController],
   providers: [
@@ -40,7 +45,28 @@ import { AuthQueryRepository } from './infrastructure/query/auth.query-repositor
     AuthQueryRepository,
     LocalStrategy,
     JwtStrategy,
+    ...useCases,
+    {
+      provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
+      useFactory: (): JwtService => {
+        return new JwtService({
+          secret: 'access-token-secret',
+          signOptions: { expiresIn: '5m' },
+        });
+      },
+      inject: [],
+    },
+    {
+      provide: REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
+      useFactory: (): JwtService => {
+        return new JwtService({
+          secret: 'refresh-token-secret',
+          signOptions: { expiresIn: '1d' },
+        });
+      },
+      inject: [],
+    },
   ],
-  exports: [UsersService,UsersRepository, MongooseModule],
+  exports: [UsersService, UsersRepository, MongooseModule],
 })
 export class UsersModule {}

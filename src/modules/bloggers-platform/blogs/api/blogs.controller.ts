@@ -27,7 +27,6 @@ import { BasicAuthGuard } from '../../../../core/guards/basic/basic-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query-handler';
 import { CreateBlogCommand } from '../application/usecases/create-blog.usecase';
-import { CreateCommentCommand } from '../../comments/application/usecases/create-coment.usecase';
 
 @Controller('blogs')
 export class BlogsController {
