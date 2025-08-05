@@ -7,6 +7,7 @@ import { StatusRepository } from '../../infrastructure/status.repository';
 import { Status, StatusModelType } from '../../domain/status.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { CalculateStatusCountCommand } from './calculate-status-count.usecase';
+import { Category } from '../../../../../core/dto/category';
 
 export class LikeStatusCommand {
   constructor(
@@ -56,6 +57,7 @@ export class LikeStatusUseСase implements ICommandHandler<LikeStatusCommand> {
       const status = this.StatusModel.createInstance({
         userId: command.userId,
         commentId: command.commentId,
+        category: Category.Comment,
         status: command.newStatus,
       });
       await this.statusRepository.save(status);
