@@ -3,11 +3,13 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode, HttpStatus,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
-  Query, UseGuards,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
@@ -35,19 +37,26 @@ export class PostsController {
     private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
-
+  @Put('postId/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
 
   @Get(':postId/comments')
   @HttpCode(200)
   async getCommentsByPostId(@Param('postId') postId: string) {
-    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(postId)
+    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(postId);
   }
 
   @Post(':postId/comments')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
-  async createComment(@ExtractUserFromRequest() user: UserContextDto,@Param('postId') postId: string,@Body() body: CreateCommentInputDto) {
-    const comment = await this.commandBus.execute<CreateCommentCommand>(new CreateCommentCommand(user.id,postId,body.content));
+  async createComment(
+    @ExtractUserFromRequest() user: UserContextDto,
+    @Param('postId') postId: string,
+    @Body() body: CreateCommentInputDto,
+  ) {
+    const comment = await this.commandBus.execute<CreateCommentCommand>(
+      new CreateCommentCommand(user.id, postId, body.content),
+    );
     return this.queryBus.execute(new GetCommentByIdQuery(comment));
   }
 
@@ -72,8 +81,6 @@ export class PostsController {
 
     return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
   }
-
-
 
   @Put(':id')
   @HttpCode(204)

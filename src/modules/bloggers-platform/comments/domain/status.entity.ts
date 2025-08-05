@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { LikeStatus } from '../../../../core/dto/like-status';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateStatusDomainDto } from './dto/create-status.domain.dto';
+import { Category } from '../../../../core/dto/category';
 
 @Schema()
 export class Status {
@@ -9,7 +10,10 @@ export class Status {
   userId: string;
 
   @Prop({ type: String, required: true })
-  commentId: string;
+  categoryId: string;
+
+  @Prop({ type: String, enum: Object.values(Category), required: true })
+  category: Category;
 
   @Prop({ type: String, enum: Object.values(LikeStatus), required: true })
   status: LikeStatus;
@@ -17,7 +21,8 @@ export class Status {
   static createInstance(dto: CreateStatusDomainDto): StatusDocument {
     const status = new this();
     status.userId = dto.userId;
-    status.commentId = dto.commentId;
+    status.categoryId = dto.commentId;
+    status.category = dto.category;
     status.status = dto.status;
 
     return status as StatusDocument;
