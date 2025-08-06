@@ -6,7 +6,7 @@ import { GetPostsQueryParams } from '../../api/input-dto/get-posts-query-params.
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { FilterQuery } from 'mongoose';
 import { BlogsQueryRepository } from '../../../blogs/infrastructure/query/blogs.query-repository';
-import { skip } from 'rxjs';
+import { LikeStatus } from '../../../../../core/dto/like-status';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -30,7 +30,9 @@ export class PostsQueryRepository {
 
     const totalCount = await this.PostModel.countDocuments(posts);
 
-    const items = posts.map(PostsViewDto.mapToView);
+    const items = posts.map((post) =>
+      PostsViewDto.mapToView(post, LikeStatus.None),
+    );
 
     return PaginatedViewDto.mapToView({
       items,
@@ -50,6 +52,6 @@ export class PostsQueryRepository {
       throw new NotFoundException('Post not found');
     }
 
-    return PostsViewDto.mapToView(post);
+    return PostsViewDto.mapToView(post, LikeStatus.None);
   }
 }
