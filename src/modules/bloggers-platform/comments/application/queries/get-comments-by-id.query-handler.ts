@@ -10,9 +10,11 @@ export class GetCommentByIdQuery {
 export class GetCommentByIdQueryHandler
   implements IQueryHandler<GetCommentByIdQuery, CommentsViewDto>
 {
-  constructor(private readonly commentsQueryRepository: CommentsQueryRepository) {}
+  constructor(
+    private readonly commentsQueryRepository: CommentsQueryRepository,
+  ) {}
 
   async execute(query: GetCommentByIdQuery): Promise<CommentsViewDto> {
-    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(query.id)
+    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(query.id);
   }
 }
