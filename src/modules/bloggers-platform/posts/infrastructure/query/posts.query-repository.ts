@@ -52,32 +52,4 @@ export class PostsQueryRepository {
 
     return PostsViewDto.mapToView(post);
   }
-
-  async getPostsByBlogId(
-    blogId: string,
-    query: GetPostsQueryParams,
-  ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    const blog =
-      await this.blogsQueryRepository.getBlogByIdOrNotFoundFail(blogId);
-    const filter: FilterQuery<Post> = {
-      blogId: blogId,
-      deletedAt: null,
-    };
-
-    const posts = await this.PostModel.find(filter)
-      .sort({ [query.sortBy]: query.sortDirection })
-      .skip(query.calculateSkip())
-      .limit(query.pageSize);
-
-    const totalCount = await this.PostModel.countDocuments(filter);
-
-    const items = posts.map(PostsViewDto.mapToView);
-
-    return PaginatedViewDto.mapToView({
-      items,
-      totalCount,
-      page: query.pageNumber,
-      size: query.pageSize,
-    });
-  }
 }
