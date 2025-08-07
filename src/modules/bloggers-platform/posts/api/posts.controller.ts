@@ -26,6 +26,8 @@ import { CreateCommentInputDto } from '../../comments/api/input-dto/create-comme
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comments-by-id.query-handler';
 import { CreateCommentCommand } from '../../comments/application/usecases/create-coment.usecase';
+import { LikeStatus } from '../../../../core/dto/like-status';
+import { PostLikeStatusCommand } from '../application/usecases/post-like-status.usecase';
 
 @Controller('posts')
 export class PostsController {
@@ -38,7 +40,12 @@ export class PostsController {
   ) {}
 
   @Put('postId/like-status')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  async postLikeStatus(@ExtractUserFromRequest() user: UserContextDto, @Param('postId') postId: string, @Body() status: LikeStatus) {
+    return this.commandBus.execute<PostLikeStatusCommand>( new PostLikeStatusCommand(user.id, postId, status) );
+  }
+
 
   @Get(':postId/comments')
   @HttpCode(200)
