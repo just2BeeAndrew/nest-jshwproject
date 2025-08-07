@@ -4,10 +4,13 @@ import { HydratedDocument, Model } from 'mongoose';
 import { CreateStatusDomainDto } from './dto/create-status.domain.dto';
 import { Category } from '../../../../core/dto/category';
 
-@Schema()
+@Schema({timestamps: true})
 export class Status {
   @Prop({ type: String, required: true })
   userId: string;
+
+  @Prop({ type: String, required: false })
+  login: string | null = null;
 
   @Prop({ type: String, required: true })
   categoryId: string;
@@ -18,9 +21,12 @@ export class Status {
   @Prop({ type: String, enum: Object.values(LikeStatus), required: true })
   status: LikeStatus;
 
+  createdAt: Date;
+
   static createInstance(dto: CreateStatusDomainDto): StatusDocument {
     const status = new this();
     status.userId = dto.userId;
+    status.login = dto.login ?? null;
     status.categoryId = dto.commentId;
     status.category = dto.category;
     status.status = dto.status;
