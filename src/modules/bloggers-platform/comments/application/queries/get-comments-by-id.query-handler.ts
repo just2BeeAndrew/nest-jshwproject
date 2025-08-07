@@ -1,9 +1,16 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CommentsViewDto } from '../../api/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../../infrastructure/query/comments.query-repository';
+import { LikeStatus } from '../../../../../core/dto/like-status';
+import { StatusRepository } from '../../infrastructure/status.repository';
+import { Category } from '../../../../../core/dto/category';
+import { Comment } from '../../domain/comments.entity';
 
 export class GetCommentByIdQuery {
-  constructor(public id: string) {}
+  constructor(
+    public userId: string,
+    public commentid: string,
+  ) {}
 }
 
 @QueryHandler(GetCommentByIdQuery)
@@ -12,9 +19,22 @@ export class GetCommentByIdQueryHandler
 {
   constructor(
     private readonly commentsQueryRepository: CommentsQueryRepository,
+    private readonly statusRepository: StatusRepository,
   ) {}
 
   async execute(query: GetCommentByIdQuery): Promise<CommentsViewDto> {
-    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(query.id);
+
+    let userStatus: LikeStatus = LikeStatus.None;
+
+    if (query.userId) {
+      const status = await this.statusRepository.findStatus(
+        query.userId,
+        query.commentid,
+        Category.Comment,
+      );
+      userStatus = status ? status.status : LikeStatus.None;
+    }
+
+    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(query.commentid, userStatus)
   }
 }

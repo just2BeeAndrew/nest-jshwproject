@@ -19,7 +19,7 @@ export class CommentsViewDto {
   createdAt: Date;
   likesInfo: LikesInfoTypeViewDto;
 
-  static mapToView(comment: CommentDocument): CommentsViewDto {
+  static mapToView(comment: CommentDocument, status: LikeStatus): CommentsViewDto {
     const dto = new CommentsViewDto();
 
     dto.id = comment._id.toString();
@@ -32,7 +32,7 @@ export class CommentsViewDto {
     dto.likesInfo = {
       likesCount: 0,
       dislikesCount: 0,
-      myStatus: LikeStatus.None
+      myStatus: status
     }
 
     return dto;

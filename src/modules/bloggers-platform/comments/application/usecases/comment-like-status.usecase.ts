@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CalculateStatusCountCommand } from './calculate-status-count.usecase';
 import { Category } from '../../../../../core/dto/category';
 
-export class LikeStatusCommand {
+export class CommentLikeStatusCommand {
   constructor(
     public userId: string,
     public commentId: string,
@@ -17,8 +17,8 @@ export class LikeStatusCommand {
   ) {}
 }
 
-@CommandHandler(LikeStatusCommand)
-export class LikeStatusUseСase implements ICommandHandler<LikeStatusCommand> {
+@CommandHandler(CommentLikeStatusCommand)
+export class CommentLikeStatusUseСase implements ICommandHandler<CommentLikeStatusCommand> {
   constructor(
     @InjectModel(Status.name) private StatusModel: StatusModelType,
     private commandBus: CommandBus,
@@ -26,7 +26,7 @@ export class LikeStatusUseСase implements ICommandHandler<LikeStatusCommand> {
     private statusRepository: StatusRepository,
   ) {}
 
-  async execute(command: LikeStatusCommand) {
+  async execute(command: CommentLikeStatusCommand) {
     const comment = await this.commentsRepository.findCommentById(
       command.commentId,
     );
@@ -41,6 +41,7 @@ export class LikeStatusUseСase implements ICommandHandler<LikeStatusCommand> {
     const existingStatus = await this.statusRepository.findStatus(
       command.userId,
       command.commentId,
+      Category.Comment
     );
     const currentStatus = existingStatus
       ? existingStatus.status

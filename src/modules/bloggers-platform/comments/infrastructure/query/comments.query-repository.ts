@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {  Comment, CommentDocument, CommentModelType } from '../../domain/comments.entity';
 import { CommentsViewDto } from '../../api/view-dto/comments.view-dto';
+import { LikeStatus } from '../../../../../core/dto/like-status';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -10,7 +11,7 @@ export class CommentsQueryRepository {
     private commentModel: CommentModelType
   ) {}
 
-  async getCommentByIdOrNotFoundFail(id: string): Promise<CommentsViewDto> {
+  async getCommentByIdOrNotFoundFail(id: string, status: LikeStatus): Promise<CommentsViewDto> {
     const comment = await this.commentModel.findOne({
       _id: id,
       deletedAt: null,
@@ -20,6 +21,6 @@ export class CommentsQueryRepository {
       throw new NotFoundException('Comment not found');
     }
 
-    return CommentsViewDto.mapToView(comment);
+    return CommentsViewDto.mapToView(comment, status);
   }
 }
