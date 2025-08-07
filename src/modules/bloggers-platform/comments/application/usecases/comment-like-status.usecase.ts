@@ -43,6 +43,7 @@ export class CommentLikeStatusUseСase implements ICommandHandler<CommentLikeSta
       command.commentId,
       Category.Comment
     );
+
     const currentStatus = existingStatus
       ? existingStatus.status
       : LikeStatus.None;
