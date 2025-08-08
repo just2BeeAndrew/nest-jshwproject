@@ -11,6 +11,7 @@ import { DomainException } from '../../../../../core/exceptions/domain-exception
 import { DomainExceptionCode } from '../../../../../core/exceptions/filters/domain-exception-codes';
 import { Category } from '../../../../../core/dto/category';
 import { UsersRepository } from '../../../../users/infrastructure/users.repository';
+import { CalculateStatusCountCommand } from '../../../comments/application/usecases/calculate-status-count.usecase';
 
 export class PostLikeStatusCommand {
   constructor(
@@ -62,5 +63,39 @@ export class PostLikeStatusUseCase
     const currentStatus = existingStatus
       ? existingStatus.status
       : LikeStatus.None;
+
+    if (existingStatus) {
+      if (existingStatus.status === command.newStatus) {
+        return;
+      } else {
+        existingStatus.setStatus(command.newStatus);
+        await this.statusRepository.save(existingStatus);
+      }
+    } else if (command.newStatus !== LikeStatus.None) {
+      const status = this.StatusModel.createInstance({
+        userId: command.userId,
+        login: user.accountData.login,
+        categoryId: command.postId,
+        category: Category.Post,
+        status: command.newStatus,
+      });
+      await this.statusRepository.save(status);
+    }
+
+    const updatedCounts =
+      await this.commandBus.execute<CalculateStatusCountCommand>(
+        new CalculateStatusCountCommand(
+          post.extendedLikesInfo.likesCount,
+          post.extendedLikesInfo.dislikesCount,
+          currentStatus,
+          command.newStatus,
+        ),
+      );
+
+    post.setStatusCounters(
+      updatedCounts.likesCount,
+      updatedCounts.dislikesCount,
+    );
+    await this.postsRepository.save(post);
   }
 }

@@ -4,7 +4,7 @@ import { Category } from '../../../../../core/dto/category';
 export class CreateStatusDomainDto {
   userId: string;
   login?: string;
-  commentId: string;
+  categoryId: string;
   category: Category;
   status: LikeStatus;
 }

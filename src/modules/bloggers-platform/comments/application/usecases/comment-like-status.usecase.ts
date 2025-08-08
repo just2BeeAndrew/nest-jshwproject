@@ -58,7 +58,7 @@ export class CommentLikeStatusUseСase implements ICommandHandler<CommentLikeSta
     } else if (command.newStatus !== LikeStatus.None) {
       const status = this.StatusModel.createInstance({
         userId: command.userId,
-        commentId: command.commentId,
+        categoryId: command.commentId,
         category: Category.Comment,
         status: command.newStatus,
       });

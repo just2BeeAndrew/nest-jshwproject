@@ -78,6 +78,11 @@ export class Post {
     if (this.blogName !== dto.blogName) this.blogName = dto.blogName;
   }
 
+  setStatusCounters(likesCount: number, dislikesCount: number) {
+    this.extendedLikesInfo.likesCount = likesCount;
+    this.extendedLikesInfo.dislikesCount = dislikesCount;
+  }
+
   softDelete() {
     if (this.deletedAt !== null) {
       throw new Error('Already deleted');
