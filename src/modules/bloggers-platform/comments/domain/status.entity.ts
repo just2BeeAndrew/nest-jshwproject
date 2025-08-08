@@ -27,7 +27,7 @@ export class Status {
     const status = new this();
     status.userId = dto.userId;
     status.login = dto.login ?? null;
-    status.categoryId = dto.commentId;
+    status.categoryId = dto.categoryId;
     status.category = dto.category;
     status.status = dto.status;
 
