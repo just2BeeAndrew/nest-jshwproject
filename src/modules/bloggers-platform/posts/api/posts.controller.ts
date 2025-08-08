@@ -28,6 +28,9 @@ import { GetCommentByIdQuery } from '../../comments/application/queries/get-comm
 import { CreateCommentCommand } from '../../comments/application/usecases/create-coment.usecase';
 import { LikeStatus } from '../../../../core/dto/like-status';
 import { PostLikeStatusCommand } from '../application/usecases/post-like-status.usecase';
+import { JwtOptionalAuthGuard } from '../../../../core/guards/bearer/jwt-optional-auth.guard';
+import { GetCommentsByPostIdQueryParams } from './input-dto/get-comments-query-params.input-dto';
+import { GetCommentByPostIdQuery } from '../application/queries/get-comment-by-postId.query-handler';
 
 @Controller('posts')
 export class PostsController {
@@ -48,9 +51,10 @@ export class PostsController {
 
 
   @Get(':postId/comments')
-  @HttpCode(200)
-  async getCommentsByPostId(@Param('postId') postId: string) {
-    return this.commentsQueryRepository.getCommentByIdOrNotFoundFail(postId);
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtOptionalAuthGuard)
+  async getCommentsByPostId(@ExtractUserFromRequest() user: UserContextDto, @Param('postId') postId: string, @Query() query: GetCommentsByPostIdQueryParams) {
+    return this.queryBus.execute(new GetCommentByPostIdQuery(user.id, postId, query));
   }
 
   @Post(':postId/comments')
@@ -64,7 +68,7 @@ export class PostsController {
     const comment = await this.commandBus.execute<CreateCommentCommand>(
       new CreateCommentCommand(user.id, postId, body.content),
     );
-    return this.queryBus.execute(new GetCommentByIdQuery(comment));
+    return this.queryBus.execute(new GetCommentByIdQuery(user.id,comment));
   }
 
   @Get(':id')
