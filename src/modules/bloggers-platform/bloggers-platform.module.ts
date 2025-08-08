@@ -14,7 +14,7 @@ import { PostsController } from './posts/api/posts.controller';
 import { Comment, CommentSchema } from './comments/domain/comments.entity';
 import { CommentsQueryRepository } from './comments/infrastructure/query/comments.query-repository';
 import { BcryptModule } from '../bcrypt/bcrypt.module';
-import { LikeStatusUseСase } from './comments/application/usecases/comment-like-status.usecase';
+import { CommentLikeStatusUseСase } from './comments/application/usecases/comment-like-status.usecase';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CommentsRepository } from './comments/infrastructure/comments.repository';
 import { CalculateStatusCountUseCase } from './comments/application/usecases/calculate-status-count.usecase';
@@ -24,9 +24,11 @@ import { CreateCommandUseCase } from './comments/application/usecases/create-com
 import { UsersModule } from '../users/users.module';
 import { GetCommentByIdQueryHandler } from './comments/application/queries/get-comments-by-id.query-handler';
 import { UpdateCommentUseCase } from './comments/application/usecases/update-comment.usecase';
+import { PostLikeStatusUseCase } from './posts/application/usecases/post-like-status.usecase';
 
 const useCases = [
-  LikeStatusUseСase,
+  CommentLikeStatusUseСase,
+  PostLikeStatusUseCase,
   CalculateStatusCountUseCase,
   CreateCommandUseCase,
   UpdateCommentUseCase,
