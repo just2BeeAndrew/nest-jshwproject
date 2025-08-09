@@ -11,10 +11,12 @@ import {
   Status,
   StatusModelType,
 } from '../../../comments/domain/status.entity';
-import { PostsQueryRepository } from '../../infrastructure/query/posts.query-repository';
 import { FilterQuery } from 'mongoose';
 import { LikeStatus } from '../../../../../core/dto/like-status';
 import { Category } from '../../../../../core/dto/category';
+import { PostsRepository } from '../../infrastructure/posts.repository';
+import { DomainException } from '../../../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../../../core/exceptions/filters/domain-exception-codes';
 
 export class GetCommentByPostIdQuery {
   constructor(
@@ -27,23 +29,25 @@ export class GetCommentByPostIdQuery {
 @QueryHandler(GetCommentByPostIdQuery)
 export class GetCommentsByPostIdQueryHandler
   implements
-    IQueryHandler<
-      GetCommentByPostIdQuery,
-      PaginatedViewDto<CommentsViewDto[]>
-    >
+    IQueryHandler<GetCommentByPostIdQuery, PaginatedViewDto<CommentsViewDto[]>>
 {
   constructor(
     @InjectModel(Comment.name) private readonly CommentModel: CommentModelType,
     @InjectModel(Status.name) private readonly StatusModel: StatusModelType,
-    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly postsRepository: PostsRepository,
   ) {}
 
   async execute(
     query: GetCommentByPostIdQuery,
   ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
-    const post = await this.postsQueryRepository.getByIdOrNotFoundFail(
-      query.postId,
-    );
+    const post = await this.postsRepository.findById(query.postId);
+    if (!post) {
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'Not Found',
+        extensions: [{message: "Post not found", key: 'post'}],
+      });
+    }
 
     const filter: FilterQuery<Comment> = {
       postId: query.postId,
@@ -65,12 +69,13 @@ export class GetCommentsByPostIdQueryHandler
         category: Category.Comment,
       });
 
-      for (const status of statuses) {
-        statusMap.set(status.categoryId.toString(), status.status);
-      }
+      statusMap = statuses.reduce((map, status) => {
+        map.set(status.categoryId.toString(), status.status);
+        return map;
+      }, new Map<string, LikeStatus>());
     }
 
-    const totalCount = await this.CommentModel.countDocuments(filter)
+    const totalCount = await this.CommentModel.countDocuments(filter);
 
     const items = comments.map((comment) =>
       CommentsViewDto.mapToView(
@@ -84,6 +89,6 @@ export class GetCommentsByPostIdQueryHandler
       totalCount,
       page: query.query.pageNumber,
       size: query.query.pageSize,
-    })
+    });
   }
 }

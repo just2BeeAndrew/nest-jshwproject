@@ -3,8 +3,8 @@ import { PostDocument } from '../../domain/posts.entity';
 
 class newestLikesViewDTO {
   addedAt: string;
-  userId: string;
-  login: string;
+  userId: string | null;
+  login: string | null;
 }
 
 class LikesInfoViewDto {
@@ -37,8 +37,12 @@ export class PostsViewDto {
     dto.extendedLikesInfo = {
       likesCount: 0,
       dislikesCount: 0,
-      myStatus: status,
-      newestLikes: []
+      myStatus: status ,
+      newestLikes: post.extendedLikesInfo.newestLikes.map((like) => ({
+        addedAt: like.addedAt,
+        userId: like.userId,
+        login: like.login,
+      })),
     };
 
     return dto;

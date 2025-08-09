@@ -9,7 +9,6 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CommentsQueryRepository } from '../infrastructure/query/comments.query-repository';
 import { CommentsViewDto } from './view-dto/comments.view-dto';
 import { LikesStatusDto } from './input-dto/likes-status.input-dto';
 import { JwtAuthGuard } from '../../../../core/guards/bearer/jwt-auth.guard';
@@ -30,7 +29,6 @@ export class CommentsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
   @Get(':id')
