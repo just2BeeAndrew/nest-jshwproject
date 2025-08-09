@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { Blog } from '../../blogs/domain/blogs.entity';
 import { CreatePostDomainDto } from './dto/create-posts.domain.dto';
 import { UpdatePostsDomainDto } from './dto/update-posts.domain.dto';
 
@@ -14,6 +13,12 @@ export class LikeDetails {
 
   @Prop({ type: String, nullable: true })
   login: string | null;
+
+  constructor(createdAt: Date, userId: string | null, login: string | null) {
+    this.addedAt = createdAt.toISOString();
+    this.userId = userId;
+    this.login = login;
+  }
 }
 
 @Schema()
@@ -83,6 +88,10 @@ export class Post {
     this.extendedLikesInfo.dislikesCount = dislikesCount;
   }
 
+  setNewestLikes(newestLikes: LikeDetails[]) {
+    this.extendedLikesInfo.newestLikes = newestLikes;
+  }
+
   softDelete() {
     if (this.deletedAt !== null) {
       throw new Error('Already deleted');
@@ -91,7 +100,7 @@ export class Post {
   }
 
   static async clean(this: PostModelType) {
-    await this.deleteMany({})
+    await this.deleteMany({});
   }
 }
 

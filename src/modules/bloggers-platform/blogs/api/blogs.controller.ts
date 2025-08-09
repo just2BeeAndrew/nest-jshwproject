@@ -1,14 +1,14 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
   Post,
   Put,
-  Delete,
-  HttpCode,
   Query,
-  Body,
-  Param,
-  HttpStatus,
   UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from '../application/blogs.service';
@@ -31,6 +31,7 @@ import { JwtOptionalAuthGuard } from '../../../../core/guards/bearer/jwt-optiona
 import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../../../core/dto/user-context.dto';
 import { GetPostsByBlogIdQuery } from '../../posts/application/queries/get-post-by-blogId.query-handler';
+import { LikeStatus } from '../../../../core/dto/like-status';
 
 @Controller('blogs')
 export class BlogsController {
@@ -85,7 +86,10 @@ export class BlogsController {
   ) {
     const postId = await this.postsService.createPost({ ...body, blogId });
 
-    return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
+    return this.postsQueryRepository.getByIdOrNotFoundFail(
+      postId,
+      LikeStatus.None,
+    );
   }
 
   @Get(':id')

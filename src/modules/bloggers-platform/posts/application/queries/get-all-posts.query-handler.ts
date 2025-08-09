@@ -3,53 +3,31 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { PostsViewDto } from '../../api/view-dto/posts.view-dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostModelType } from '../../domain/posts.entity';
-import { BlogsQueryRepository } from '../../../blogs/infrastructure/query/blogs.query-repository';
+import { Status, StatusModelType } from '../../../comments/domain/status.entity';
 import { FilterQuery } from 'mongoose';
+import { Post, PostModelType } from '../../domain/posts.entity';
 import { LikeStatus } from '../../../../../core/dto/like-status';
-import {
-  Status,
-  StatusModelType,
-} from '../../../comments/domain/status.entity';
 import { Category } from '../../../../../core/dto/category';
-import { DomainException } from '../../../../../core/exceptions/domain-exception';
-import { DomainExceptionCode } from '../../../../../core/exceptions/filters/domain-exception-codes';
 
-export class GetPostsByBlogIdQuery {
+export class GetAllPostsQuery {
   constructor(
-    public blogId: string,
-    public query: GetPostsQueryParams,
     public userId: string,
+    public query: GetPostsQueryParams,
   ) {}
 }
 
-@QueryHandler(GetPostsByBlogIdQuery)
-export class GetPostsByBlogIdQueryHandler
-  implements
-    IQueryHandler<GetPostsByBlogIdQuery, PaginatedViewDto<PostsViewDto[]>>
-{
+@QueryHandler(GetAllPostsQuery)
+export class GetAllPostsQueryHandler implements IQueryHandler<GetAllPostsQuery, PaginatedViewDto<PostsViewDto[]>> {
   constructor(
     @InjectModel(Post.name) private readonly PostModel: PostModelType,
     @InjectModel(Status.name) private readonly StatusModel: StatusModelType,
-    private readonly blogsQueryRepository: BlogsQueryRepository,
-  ) {}
+  ) {
+  }
 
   async execute(
-    query: GetPostsByBlogIdQuery,
+    query: GetAllPostsQuery,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    const blog = await this.blogsQueryRepository.getBlogByIdOrNotFoundFail(
-      query.blogId,
-    );
-
-    if (!blog) {
-      throw new DomainException({
-        code: DomainExceptionCode.NotFound,
-        message: 'Not found',
-        extensions:[{message: "Blog not found", key: 'blog'}],
-      });
-    }
     const filter: FilterQuery<Post> = {
-      blogId: query.blogId,
       deletedAt: null,
     };
 
@@ -60,8 +38,8 @@ export class GetPostsByBlogIdQueryHandler
 
     let statusMap = new Map<string, LikeStatus>();
 
-    if (query.userId) {
-      const postIds = posts.map((p) => p._id.toString());
+    if(query.userId) {
+      const postIds = posts.map(p => p._id.toString());
       const statuses = await this.StatusModel.find({
         userId: query.userId,
         categoryId: { $in: postIds },
@@ -74,7 +52,7 @@ export class GetPostsByBlogIdQueryHandler
       }, new Map<string, LikeStatus>());
     }
 
-    const totalCount = await this.PostModel.countDocuments(filter);
+    const totalCount = await this.PostModel.countDocuments(posts);
 
     const items = posts.map((post) =>
       PostsViewDto.mapToView(

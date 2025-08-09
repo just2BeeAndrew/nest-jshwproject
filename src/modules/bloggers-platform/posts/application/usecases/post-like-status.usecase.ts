@@ -12,6 +12,7 @@ import { DomainExceptionCode } from '../../../../../core/exceptions/filters/doma
 import { Category } from '../../../../../core/dto/category';
 import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 import { CalculateStatusCountCommand } from '../../../comments/application/usecases/calculate-status-count.usecase';
+import { LikeDetails } from '../../domain/posts.entity';
 
 export class PostLikeStatusCommand {
   constructor(
@@ -96,6 +97,11 @@ export class PostLikeStatusUseCase
       updatedCounts.likesCount,
       updatedCounts.dislikesCount,
     );
+    await this.postsRepository.save(post);
+
+    const newestLikes: LikeDetails[] = await this.statusRepository.getNewestLikes(command.postId)
+
+    post.setNewestLikes(newestLikes);
     await this.postsRepository.save(post);
   }
 }

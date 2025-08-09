@@ -18,7 +18,6 @@ import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { CreatePostsInputDto } from './input-dto/create-posts.input-dto';
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { UpdatePostsInputDto } from './input-dto/update-posts.input-dto';
-import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query-repository';
 import { JwtAuthGuard } from '../../../../core/guards/bearer/jwt-auth.guard';
 import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../../../core/dto/user-context.dto';
@@ -31,6 +30,8 @@ import { PostLikeStatusCommand } from '../application/usecases/post-like-status.
 import { JwtOptionalAuthGuard } from '../../../../core/guards/bearer/jwt-optional-auth.guard';
 import { GetCommentsByPostIdQueryParams } from './input-dto/get-comments-query-params.input-dto';
 import { GetCommentByPostIdQuery } from '../application/queries/get-comment-by-postId.query-handler';
+import { GetAllPostsQuery } from '../application/queries/get-all-posts.query-handler';
+import { GetPostByIdQuery } from '../application/queries/get-post-by-id.query-handler';
 
 @Controller('posts')
 export class PostsController {
@@ -39,22 +40,32 @@ export class PostsController {
     private queryBus: QueryBus,
     private postsService: PostsService,
     private postsQueryRepository: PostsQueryRepository,
-    private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
   @Put('postId/like-status')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async postLikeStatus(@ExtractUserFromRequest() user: UserContextDto, @Param('postId') postId: string, @Body() status: LikeStatus) {
-    return this.commandBus.execute<PostLikeStatusCommand>( new PostLikeStatusCommand(user.id, postId, status) );
+  async postLikeStatus(
+    @ExtractUserFromRequest() user: UserContextDto,
+    @Param('postId') postId: string,
+    @Body() status: LikeStatus,
+  ) {
+    return this.commandBus.execute<PostLikeStatusCommand>(
+      new PostLikeStatusCommand(user.id, postId, status),
+    );
   }
-
 
   @Get(':postId/comments')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtOptionalAuthGuard)
-  async getCommentsByPostId(@ExtractUserFromRequest() user: UserContextDto, @Param('postId') postId: string, @Query() query: GetCommentsByPostIdQueryParams) {
-    return this.queryBus.execute(new GetCommentByPostIdQuery(user.id, postId, query));
+  async getCommentsByPostId(
+    @ExtractUserFromRequest() user: UserContextDto,
+    @Param('postId') postId: string,
+    @Query() query: GetCommentsByPostIdQueryParams,
+  ) {
+    return this.queryBus.execute(
+      new GetCommentByPostIdQuery(user.id, postId, query),
+    );
   }
 
   @Post(':postId/comments')
@@ -68,29 +79,31 @@ export class PostsController {
     const comment = await this.commandBus.execute<CreateCommentCommand>(
       new CreateCommentCommand(user.id, postId, body.content),
     );
-    return this.queryBus.execute(new GetCommentByIdQuery(user.id,comment));
+    return this.queryBus.execute(new GetCommentByIdQuery(user.id, comment));
   }
 
   @Get(':id')
-  @HttpCode(200)
-  async getPostById(@Param('id') id: string) {
-    return this.postsQueryRepository.getByIdOrNotFoundFail(id);
+  @HttpCode(HttpStatus.OK)
+  async getPostById(@ExtractUserFromRequest() user: UserContextDto,@Param('id') id: string) {
+    return this.queryBus.execute( new GetPostByIdQuery(user.id, id));
   }
 
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtOptionalAuthGuard)
   async getAllPosts(
+    @ExtractUserFromRequest() user: UserContextDto,
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    return this.postsQueryRepository.getAllPosts(query);
+    return this.queryBus.execute(new GetAllPostsQuery(user.id, query));
   }
 
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   async createPost(@Body() body: CreatePostsInputDto) {
     const postId = await this.postsService.createPost(body);
 
-    return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
+    return this.postsQueryRepository.getPostById(postId);
   }
 
   @Put(':id')
@@ -98,7 +111,7 @@ export class PostsController {
   async updatePost(@Param('id') id: string, @Body() body: UpdatePostsInputDto) {
     const postId = await this.postsService.updatePost(id, body);
 
-    return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
+    return this.postsQueryRepository.getPostById(postId);
   }
 
   @Delete(':id')
