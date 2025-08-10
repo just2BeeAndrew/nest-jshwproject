@@ -8,7 +8,7 @@ import { UsersQueryRepository } from './infrastructure/query/users.query-reposit
 import { BcryptModule } from '../bcrypt/bcrypt.module';
 import { AuthController } from './api/auth.controller';
 import { AuthService } from './application/auth.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { LocalStrategy } from '../../core/guards/local/local.strategy';
 import { JwtStrategy } from '../../core/guards/bearer/jwt.strategy';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -21,7 +21,7 @@ import {
 import { LoginUseCase } from './application/usecases/login.usecases';
 import { CqrsModule } from '@nestjs/cqrs';
 
-const useCases = [LoginUseCase]
+const useCases = [LoginUseCase];
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ const useCases = [LoginUseCase]
         limit: 5,
       },
     ]),
-    CqrsModule
+    CqrsModule,
   ],
   controllers: [UsersController, AuthController],
   providers: [
@@ -51,7 +51,7 @@ const useCases = [LoginUseCase]
       useFactory: (): JwtService => {
         return new JwtService({
           secret: 'access-token-secret',
-          signOptions: { expiresIn: '5m' },
+          signOptions: { expiresIn: '23h' },
         });
       },
       inject: [],

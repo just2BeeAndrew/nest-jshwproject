@@ -10,9 +10,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthQueryRepository } from '../infrastructure/query/auth.query-repository';
-import { UsersService } from '../application/users.service';
 import { LocalAuthGuard } from '../../../core/guards/local/local-auth.guard';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { ExtractUserFromRequest } from '../../../core/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../../core/dto/user-context.dto';
 import { JwtAuthGuard } from '../../../core/guards/bearer/jwt-auth.guard';
@@ -51,10 +50,10 @@ export class AuthController {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true, //process.env.NODE_ENV === 'production',
     });
 
-    return {accessToken};
+    return { accessToken };
   }
 
   @Post('password-recovery')

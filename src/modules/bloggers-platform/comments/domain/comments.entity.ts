@@ -66,6 +66,7 @@ export class Comment {
       comment.userLogin,
     );
     newComment.likesInfo = { likesCount: 0, dislikesCount: 0 };
+    newComment.deletedAt = null
 
     return newComment as CommentDocument;
   }

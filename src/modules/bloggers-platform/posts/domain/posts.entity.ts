@@ -3,6 +3,21 @@ import { HydratedDocument, Model } from 'mongoose';
 import { CreatePostDomainDto } from './dto/create-posts.domain.dto';
 import { UpdatePostsDomainDto } from './dto/update-posts.domain.dto';
 
+export const titleConstants = {
+  minLength: 1,
+  maxLength: 30,
+}
+
+export const shortDescriptionConstants = {
+  minLength: 1,
+  maxLength: 100,
+}
+
+export const contentConstants = {
+  minLength: 1,
+  maxLength: 1000,
+}
+
 @Schema()
 export class LikeDetails {
   @Prop({ type: String, required: true })

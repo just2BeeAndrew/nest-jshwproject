@@ -1,16 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Blog, BlogModelType } from '../domain/blogs.entity';
-import { CreateBlogDto } from '../dto/create-blog.dto';
 import { UpdateBlogsDto } from '../dto/update-blog.dto';
 import { BlogsRepository } from '../infrastructure/blogs.repository';
-import { InjectModel } from '@nestjs/mongoose';
-import { CommandBus } from '@nestjs/cqrs';
-import { CreateBlogCommand } from './usecases/create-blog.usecase';
 
 @Injectable()
 export class BlogsService {
   constructor(
-    @InjectModel(Blog.name)
     private blogRepository: BlogsRepository,
   ) {}
 

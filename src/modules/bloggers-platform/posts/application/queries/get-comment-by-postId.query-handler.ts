@@ -20,9 +20,9 @@ import { DomainExceptionCode } from '../../../../../core/exceptions/filters/doma
 
 export class GetCommentByPostIdQuery {
   constructor(
-    public userId: string,
     public postId: string,
     public query: GetCommentsByPostIdQueryParams,
+    public userId?: string | null,
   ) {}
 }
 
@@ -45,7 +45,7 @@ export class GetCommentsByPostIdQueryHandler
       throw new DomainException({
         code: DomainExceptionCode.NotFound,
         message: 'Not Found',
-        extensions: [{message: "Post not found", key: 'post'}],
+        extensions: [{ message: 'Post not found', key: 'post' }],
       });
     }
 

@@ -35,8 +35,8 @@ export class PostsViewDto {
     dto.blogName = post.blogName;
     dto.createdAt = post.createdAt.toISOString();
     dto.extendedLikesInfo = {
-      likesCount: 0,
-      dislikesCount: 0,
+      likesCount: post.extendedLikesInfo.likesCount,
+      dislikesCount: post.extendedLikesInfo.dislikesCount,
       myStatus: status ,
       newestLikes: post.extendedLikesInfo.newestLikes.map((like) => ({
         addedAt: like.addedAt,

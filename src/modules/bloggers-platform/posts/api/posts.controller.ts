@@ -25,13 +25,15 @@ import { CreateCommentInputDto } from '../../comments/api/input-dto/create-comme
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comments-by-id.query-handler';
 import { CreateCommentCommand } from '../../comments/application/usecases/create-coment.usecase';
-import { LikeStatus } from '../../../../core/dto/like-status';
 import { PostLikeStatusCommand } from '../application/usecases/post-like-status.usecase';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/bearer/jwt-optional-auth.guard';
 import { GetCommentsByPostIdQueryParams } from './input-dto/get-comments-query-params.input-dto';
 import { GetCommentByPostIdQuery } from '../application/queries/get-comment-by-postId.query-handler';
 import { GetAllPostsQuery } from '../application/queries/get-all-posts.query-handler';
 import { GetPostByIdQuery } from '../application/queries/get-post-by-id.query-handler';
+import { ExtractOptionalUserFromRequest } from '../../../../core/decorators/param/extract-optional-user-from-request.decorator';
+import { LikesStatusInputDto } from '../../../../core/dto/likes-status.input-dto';
+import { BasicAuthGuard } from '../../../../core/guards/basic/basic-auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -42,16 +44,16 @@ export class PostsController {
     private postsQueryRepository: PostsQueryRepository,
   ) {}
 
-  @Put('postId/like-status')
+  @Put(':postId/like-status')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async postLikeStatus(
     @ExtractUserFromRequest() user: UserContextDto,
     @Param('postId') postId: string,
-    @Body() status: LikeStatus,
+    @Body() likeStatus: LikesStatusInputDto,
   ) {
     return this.commandBus.execute<PostLikeStatusCommand>(
-      new PostLikeStatusCommand(user.id, postId, status),
+      new PostLikeStatusCommand(user.id, postId, likeStatus.likeStatus),
     );
   }
 
@@ -59,12 +61,13 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtOptionalAuthGuard)
   async getCommentsByPostId(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractOptionalUserFromRequest() user: UserContextDto | null,
     @Param('postId') postId: string,
     @Query() query: GetCommentsByPostIdQueryParams,
   ) {
+    const userId = user ? user.id : null;
     return this.queryBus.execute(
-      new GetCommentByPostIdQuery(user.id, postId, query),
+      new GetCommentByPostIdQuery(postId, query, userId),
     );
   }
 
@@ -79,26 +82,33 @@ export class PostsController {
     const comment = await this.commandBus.execute<CreateCommentCommand>(
       new CreateCommentCommand(user.id, postId, body.content),
     );
-    return this.queryBus.execute(new GetCommentByIdQuery(user.id, comment));
+    return this.queryBus.execute(new GetCommentByIdQuery(comment, user.id));
   }
 
   @Get(':id')
+  @UseGuards(JwtOptionalAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async getPostById(@ExtractUserFromRequest() user: UserContextDto,@Param('id') id: string) {
-    return this.queryBus.execute( new GetPostByIdQuery(user.id, id));
+  async getPostById(
+    @ExtractOptionalUserFromRequest() user: UserContextDto | null,
+    @Param('id') id: string,
+  ) {
+    const userId = user ? user.id : null;
+    return this.queryBus.execute(new GetPostByIdQuery(id, userId));
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtOptionalAuthGuard)
   async getAllPosts(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractOptionalUserFromRequest() user: UserContextDto | null,
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    return this.queryBus.execute(new GetAllPostsQuery(user.id, query));
+    const userId = user ? user.id : null;
+    return this.queryBus.execute(new GetAllPostsQuery(query, userId));
   }
 
   @Post()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createPost(@Body() body: CreatePostsInputDto) {
     const postId = await this.postsService.createPost(body);
@@ -107,7 +117,8 @@ export class PostsController {
   }
 
   @Put(':id')
-  @HttpCode(204)
+  @UseGuards(BasicAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(@Param('id') id: string, @Body() body: UpdatePostsInputDto) {
     const postId = await this.postsService.updatePost(id, body);
 
@@ -115,7 +126,8 @@ export class PostsController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @UseGuards(BasicAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param('id') id: string) {
     return this.postsService.deletePost(id);
   }

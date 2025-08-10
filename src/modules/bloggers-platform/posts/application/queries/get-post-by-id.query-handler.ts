@@ -7,8 +7,8 @@ import { Category } from '../../../../../core/dto/category';
 
 export class GetPostByIdQuery {
   constructor(
-    public userid: string,
     public id: string,
+    public userid?: string | null,
   ) {}
 }
 

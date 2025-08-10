@@ -16,7 +16,7 @@ export class CommentsViewDto {
   id: string;
   content: string;
   commentatorInfo: CommentatorInfoTypeViewDto;
-  createdAt: Date;
+  createdAt: string;
   likesInfo: LikesInfoTypeViewDto;
 
   static mapToView(comment: CommentDocument, status: LikeStatus): CommentsViewDto {
@@ -28,10 +28,10 @@ export class CommentsViewDto {
       userId: comment.commentatorInfo.userId,
       userLogin: comment.commentatorInfo.userLogin,
     }
-    createdAt: comment.createdAt.toISOString();
+    dto.createdAt = comment.createdAt.toISOString();
     dto.likesInfo = {
-      likesCount: 0,
-      dislikesCount: 0,
+      likesCount: comment.likesInfo.likesCount,
+      dislikesCount: comment.likesInfo.dislikesCount,
       myStatus: status
     }
 
