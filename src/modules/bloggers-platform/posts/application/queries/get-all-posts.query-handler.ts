@@ -11,8 +11,8 @@ import { Category } from '../../../../../core/dto/category';
 
 export class GetAllPostsQuery {
   constructor(
-    public userId: string,
     public query: GetPostsQueryParams,
+    public userId?: string | null,
   ) {}
 }
 

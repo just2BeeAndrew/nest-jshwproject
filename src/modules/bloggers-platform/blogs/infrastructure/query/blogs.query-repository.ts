@@ -4,8 +4,11 @@ import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dt
 import { FilterQuery } from 'mongoose';
 import { Blog, BlogModelType } from '../../domain/blogs.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { DomainException } from '../../../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../../../core/exceptions/filters/domain-exception-codes';
 
+@Injectable()
 export class BlogsQueryRepository {
   constructor(
     @InjectModel(Blog.name)
@@ -19,7 +22,11 @@ export class BlogsQueryRepository {
     });
 
     if (!blog) {
-      throw new NotFoundException('Blog not found');
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'Not Found',
+        extensions:[{message: "Blog not found", key: "blog"}],
+      });
     }
 
     return BlogsViewDto.mapToView(blog);

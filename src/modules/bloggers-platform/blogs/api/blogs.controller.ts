@@ -28,10 +28,10 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query-handler';
 import { CreateBlogCommand } from '../application/usecases/create-blog.usecase';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/bearer/jwt-optional-auth.guard';
-import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../../../core/dto/user-context.dto';
 import { GetPostsByBlogIdQuery } from '../../posts/application/queries/get-post-by-blogId.query-handler';
 import { LikeStatus } from '../../../../core/dto/like-status';
+import { ExtractOptionalUserFromRequest } from '../../../../core/decorators/param/extract-optional-user-from-request.decorator';
 
 @Controller('blogs')
 export class BlogsController {
@@ -55,9 +55,7 @@ export class BlogsController {
   @Post()
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  async createBlog(
-    @Body() body: CreateBlogInputDto,
-  ) /*:Promise<BlogsViewDto>*/ {
+  async createBlog(@Body() body: CreateBlogInputDto) {
     const blogId = await this.commandBus.execute<CreateBlogCommand, string>(
       new CreateBlogCommand(body),
     );
@@ -69,21 +67,24 @@ export class BlogsController {
   @UseGuards(JwtOptionalAuthGuard)
   @HttpCode(HttpStatus.OK)
   async getAllPostsByBlogId(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractOptionalUserFromRequest() user: UserContextDto,
     @Param('blogId') blogId: string,
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
+    const userid = user ? user.id : null;
     return this.queryBus.execute(
-      new GetPostsByBlogIdQuery(blogId, query, user.id),
+      new GetPostsByBlogIdQuery(blogId, query, userid),
     );
   }
 
   @Post(':blogId/posts')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(BasicAuthGuard)
   async createPostByBlogId(
     @Param('blogId') blogId: string,
     @Body() body: CreatePostsInputDto,
   ) {
+    console.log(body);
     const postId = await this.postsService.createPost({ ...body, blogId });
 
     return this.postsQueryRepository.getByIdOrNotFoundFail(
@@ -93,13 +94,14 @@ export class BlogsController {
   }
 
   @Get(':id')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async getBlogById(@Param('id') id: string) {
     return this.blogsQueryRepository.getBlogByIdOrNotFoundFail(id);
   }
 
   @Put(':id')
-  @HttpCode(204)
+  @UseGuards(BasicAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param('id') id: string, @Body() body: UpdateBlogsInputDto) {
     const blogId = await this.blogsService.updateBlog(id, body);
 
@@ -107,7 +109,8 @@ export class BlogsController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(BasicAuthGuard)
   async deleteBlog(@Param('id') id: string) {
     return this.blogsService.deleteBlog(id);
   }

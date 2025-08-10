@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostModelType } from '../../domain/posts.entity';
 import { PostsViewDto } from '../../api/view-dto/posts.view-dto';
 import { LikeStatus } from '../../../../../core/dto/like-status';
+import { DomainException } from '../../../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../../../core/exceptions/filters/domain-exception-codes';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -18,7 +20,11 @@ export class PostsQueryRepository {
     });
 
     if (!post) {
-      throw new NotFoundException('Post not found');
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'Not found',
+        extensions: [{message:"Post not found", key: "post"}]
+      });
     }
 
     return PostsViewDto.mapToView(post, LikeStatus.None);
@@ -34,7 +40,11 @@ export class PostsQueryRepository {
     });
 
     if (!post) {
-      throw new NotFoundException('Post not found');
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'Not found',
+        extensions: [{ message: 'Post not found', key: 'post' }],
+      });
     }
 
     return PostsViewDto.mapToView(post, status);

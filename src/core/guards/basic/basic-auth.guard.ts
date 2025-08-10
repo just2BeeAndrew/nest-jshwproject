@@ -28,6 +28,7 @@ export class BasicAuthGuard implements CanActivate {
       throw new DomainException({
         code: DomainExceptionCode.Unauthorized,
         message: 'Unauthorized',
+        extensions: [{message: 'User unauthorized', key: "user"}]
       });
     }
 
@@ -44,6 +45,7 @@ export class BasicAuthGuard implements CanActivate {
       throw new DomainException({
         code: DomainExceptionCode.Unauthorized,
         message: 'Unauthorized',
+        extensions: [{message: 'User unauthorized', key: "user"}]
       });
     }
   }

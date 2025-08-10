@@ -20,21 +20,37 @@ import { CommentsRepository } from './comments/infrastructure/comments.repositor
 import { CalculateStatusCountUseCase } from './comments/application/usecases/calculate-status-count.usecase';
 import { Status, StatusSchema } from './comments/domain/status.entity';
 import { StatusRepository } from './comments/infrastructure/status.repository';
-import { CreateCommandUseCase } from './comments/application/usecases/create-coment.usecase';
+import { CreateCommentUseCase } from './comments/application/usecases/create-coment.usecase';
 import { UsersModule } from '../users/users.module';
 import { GetCommentByIdQueryHandler } from './comments/application/queries/get-comments-by-id.query-handler';
 import { UpdateCommentUseCase } from './comments/application/usecases/update-comment.usecase';
 import { PostLikeStatusUseCase } from './posts/application/usecases/post-like-status.usecase';
+import { CreateBlogUseCase } from './blogs/application/usecases/create-blog.usecase';
+import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-by-id.query-handler';
+import { GetPostByIdQueryHandler } from './posts/application/queries/get-post-by-id.query-handler';
+import { GetAllPostsQueryHandler } from './posts/application/queries/get-all-posts.query-handler';
+import { GetPostsByBlogIdQueryHandler } from './posts/application/queries/get-post-by-blogId.query-handler';
+import { DeleteCommentUseCase } from './comments/application/usecases/delete-comment.usecase';
+import { GetCommentsByPostIdQueryHandler } from './posts/application/queries/get-comment-by-postId.query-handler';
 
 const useCases = [
+  CreateBlogUseCase,
   CommentLikeStatusUseСase,
   PostLikeStatusUseCase,
   CalculateStatusCountUseCase,
-  CreateCommandUseCase,
+  CreateCommentUseCase,
   UpdateCommentUseCase,
+  DeleteCommentUseCase,
 ];
 
-const query = [GetCommentByIdQueryHandler];
+const query = [
+  GetBlogByIdQueryHandler,
+  GetAllPostsQueryHandler,
+  GetPostsByBlogIdQueryHandler,
+  GetPostByIdQueryHandler,
+  GetCommentByIdQueryHandler,
+  GetCommentsByPostIdQueryHandler,
+];
 
 @Module({
   imports: [

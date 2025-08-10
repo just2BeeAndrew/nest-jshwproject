@@ -61,6 +61,7 @@ export class PostLikeStatusUseCase
       Category.Post,
     );
 
+
     const currentStatus = existingStatus
       ? existingStatus.status
       : LikeStatus.None;
@@ -92,7 +93,6 @@ export class PostLikeStatusUseCase
           command.newStatus,
         ),
       );
-
     post.setStatusCounters(
       updatedCounts.likesCount,
       updatedCounts.dislikesCount,

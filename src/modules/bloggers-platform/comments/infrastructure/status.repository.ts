@@ -20,7 +20,7 @@ export class StatusRepository {
   ): Promise<StatusDocument | null> {
     return this.StatusModel.findOne({
       userId: userId,
-      categoryId: category,
+      categoryId: categoryId,
       category: category,
     });
   }

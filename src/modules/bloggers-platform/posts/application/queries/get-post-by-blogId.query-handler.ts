@@ -19,7 +19,7 @@ export class GetPostsByBlogIdQuery {
   constructor(
     public blogId: string,
     public query: GetPostsQueryParams,
-    public userId: string,
+    public userId?: string | null,
   ) {}
 }
 

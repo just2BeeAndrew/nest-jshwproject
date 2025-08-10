@@ -3,6 +3,23 @@ import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDomainDto } from './dto/create-blog.domain.dto';
 import { UpdateBlogsDomainDto } from './dto/update-blog.domain.dto';
 
+export const nameConstants = {
+  minLength: 1,
+  maxLength: 15,
+}
+
+export const descriptionConstants = {
+  minLength: 1,
+  maxLength: 500,
+}
+
+export const websiteUrlConstants = {
+  minLength: 1,
+  maxLength: 100,
+  match: /^https:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[-a-zA-Z0-9._~!$&'()*+,;=:@%]*)*\/?$/
+
+}
+
 @Schema({ timestamps: true })
 export class Blog {
   @Prop({ type: String, required: true })
