@@ -51,7 +51,7 @@ const useCases = [LoginUseCase];
       useFactory: (): JwtService => {
         return new JwtService({
           secret: 'access-token-secret',
-          signOptions: { expiresIn: '23h' },
+          signOptions: { expiresIn: '10_000' },
         });
       },
       inject: [],
@@ -61,7 +61,7 @@ const useCases = [LoginUseCase];
       useFactory: (): JwtService => {
         return new JwtService({
           secret: 'refresh-token-secret',
-          signOptions: { expiresIn: '1d' },
+          signOptions: { expiresIn: '20_000' },
         });
       },
       inject: [],
