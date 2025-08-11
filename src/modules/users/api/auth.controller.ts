@@ -55,6 +55,8 @@ export class AuthController {
 
     return { accessToken };
   }
+  @Post('refresh-token')
+  async refreshToken(){}
 
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)
