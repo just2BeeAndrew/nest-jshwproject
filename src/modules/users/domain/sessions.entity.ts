@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
+import { CreateSessionDomainDto } from './dto/create.session.domain.dto';
 
 @Schema({ versionKey: false })
 export class Session {
@@ -18,7 +19,7 @@ export class Session {
   @Prop({ type: Number, required: true })
   exp: number;
 
-  static createInstance(dto: any) {
+  static createInstance(dto: CreateSessionDomainDto) {
     const session = new this();
     session.userId = dto.userId;
     session.title = dto.title;
