@@ -1,4 +1,4 @@
-export class UserContextDto {
+export class AccessContextDto {
   id: string;
 }
 

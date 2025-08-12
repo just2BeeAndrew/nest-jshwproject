@@ -19,8 +19,8 @@ import { CreatePostsInputDto } from './input-dto/create-posts.input-dto';
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { UpdatePostsInputDto } from './input-dto/update-posts.input-dto';
 import { JwtAuthGuard } from '../../../../core/guards/bearer/jwt-auth.guard';
-import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
-import { UserContextDto } from '../../../../core/dto/user-context.dto';
+import { ExtractUserFromAccessToken } from '../../../../core/decorators/param/extract-user-from-access-token.decorator';
+import { AccessContextDto } from '../../../../core/dto/access-context.dto';
 import { CreateCommentInputDto } from '../../comments/api/input-dto/create-comment.input-dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comments-by-id.query-handler';
@@ -48,7 +48,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async postLikeStatus(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractUserFromAccessToken() user: AccessContextDto,
     @Param('postId') postId: string,
     @Body() likeStatus: LikesStatusInputDto,
   ) {
@@ -61,7 +61,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtOptionalAuthGuard)
   async getCommentsByPostId(
-    @ExtractOptionalUserFromRequest() user: UserContextDto | null,
+    @ExtractOptionalUserFromRequest() user: AccessContextDto | null,
     @Param('postId') postId: string,
     @Query() query: GetCommentsByPostIdQueryParams,
   ) {
@@ -75,7 +75,7 @@ export class PostsController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
   async createComment(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractUserFromAccessToken() user: AccessContextDto,
     @Param('postId') postId: string,
     @Body() body: CreateCommentInputDto,
   ) {
@@ -89,7 +89,7 @@ export class PostsController {
   @UseGuards(JwtOptionalAuthGuard)
   @HttpCode(HttpStatus.OK)
   async getPostById(
-    @ExtractOptionalUserFromRequest() user: UserContextDto | null,
+    @ExtractOptionalUserFromRequest() user: AccessContextDto | null,
     @Param('id') id: string,
   ) {
     const userId = user ? user.id : null;
@@ -100,7 +100,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtOptionalAuthGuard)
   async getAllPosts(
-    @ExtractOptionalUserFromRequest() user: UserContextDto | null,
+    @ExtractOptionalUserFromRequest() user: AccessContextDto | null,
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
     const userId = user ? user.id : null;

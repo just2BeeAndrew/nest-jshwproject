@@ -1,13 +1,13 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { AccessContextDto } from '../../dto/access-context.dto';
 
-export const ExtractOptionalUserFromRequest = createParamDecorator(
-  (data: unknown, context: ExecutionContext): AccessContextDto | null => {
+export const ExtractUserFromAccessToken = createParamDecorator(
+  (data: unknown, context: ExecutionContext): AccessContextDto => {
     const request = context.switchToHttp().getRequest();
 
     const user = request.user;
     if (!user) {
-      return null;
+      throw new Error('there is no user');
     }
 
     return user;

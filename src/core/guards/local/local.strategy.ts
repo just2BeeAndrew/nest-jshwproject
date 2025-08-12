@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from '../../../modules/users/application/auth.service';
-import { UserContextDto } from '../../dto/user-context.dto';
+import { AccessContextDto } from '../../dto/access-context.dto';
 import { DomainException } from '../../exceptions/domain-exception';
 import { DomainExceptionCode } from '../../exceptions/filters/domain-exception-codes';
 
@@ -12,7 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     super({ usernameField: 'loginOrEmail' });
   }
 
-  async validate(loginOrEmail: string, password: string): Promise<UserContextDto> {
+  async validate(loginOrEmail: string, password: string): Promise<AccessContextDto> {
     const user = await this.authService.validateUser(loginOrEmail, password);
     if (!user) {
       throw new DomainException({

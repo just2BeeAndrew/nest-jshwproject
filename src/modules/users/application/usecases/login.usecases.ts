@@ -7,6 +7,8 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Session, SessionModelType } from '../../domain/sessions.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { SessionsRepository } from '../../infrastructure/sessions.repository';
+import { Types } from 'mongoose';
 
 export class LoginCommand {
   constructor(
@@ -24,28 +26,34 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
     @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
     private readonly refreshTokenJwtService: JwtService,
     @InjectModel(Session.name) private readonly SessionModel: SessionModelType,
+    private readonly sessionsRepository: SessionsRepository,
   ) {}
 
   async execute(
     command: LoginCommand,
   ): Promise<{ accessToken: string; refreshToken: string }> {
+    const sessionId = new Types.ObjectId();
+
     const accessToken = this.accessTokenJwtService.sign({
       id: command.dto.userId,
     });
 
     const refreshToken = this.refreshTokenJwtService.sign({
       id: command.dto.userId,
+      sessionId: sessionId.toString(),
     });
 
     const { iat, exp } = this.refreshTokenJwtService.decode(refreshToken);
 
     const newSession = this.SessionModel.createInstance({
+      sessionId: sessionId,
       userId: command.dto.userId,
       title: command.title,
       ip: command.ip,
       iat: iat,
       exp: exp,
     });
+    await this.sessionsRepository.save(newSession);
 
     return { accessToken, refreshToken };
   }

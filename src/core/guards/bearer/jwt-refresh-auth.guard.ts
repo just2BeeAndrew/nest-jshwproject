@@ -1,11 +1,11 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { DomainException } from '../../exceptions/domain-exception';
 import { DomainExceptionCode } from '../../exceptions/filters/domain-exception-codes';
-import { Reflector } from '@nestjs/core';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtRefreshAuthGuard extends AuthGuard('jwt-refresh') {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -25,8 +25,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw new DomainException({
         code: DomainExceptionCode.Unauthorized,
-        message: 'Unauthorized',
-        extensions: [{message: "User unauthorized", key: "user"}]
+        message: 'Refresh token is invalid or expired',
+        extensions: [{ message: 'User unauthorized', key: 'user' }],
       });
     }
     return user;

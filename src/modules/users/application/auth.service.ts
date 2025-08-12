@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { JwtService } from '@nestjs/jwt';
-import { UserContextDto } from '../../../core/dto/user-context.dto';
+import { AccessContextDto } from '../../../core/dto/access-context.dto';
 import { BcryptService } from '../../bcrypt/application/bcrypt.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from './users.service';
@@ -23,7 +23,7 @@ export class AuthService {
   async validateUser(
     loginOrEmail: string,
     password: string,
-  ): Promise<UserContextDto | null> {
+  ): Promise<AccessContextDto | null> {
     const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail);
     if (!user) {
       return null;

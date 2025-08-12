@@ -28,7 +28,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query-handler';
 import { CreateBlogCommand } from '../application/usecases/create-blog.usecase';
 import { JwtOptionalAuthGuard } from '../../../../core/guards/bearer/jwt-optional-auth.guard';
- import { UserContextDto } from '../../../../core/dto/user-context.dto';
+ import { AccessContextDto } from '../../../../core/dto/access-context.dto';
 import { GetPostsByBlogIdQuery } from '../../posts/application/queries/get-post-by-blogId.query-handler';
 import { LikeStatus } from '../../../../core/dto/like-status';
 import { ExtractOptionalUserFromRequest } from '../../../../core/decorators/param/extract-optional-user-from-request.decorator';
@@ -67,7 +67,7 @@ export class BlogsController {
   @UseGuards(JwtOptionalAuthGuard)
   @HttpCode(HttpStatus.OK)
   async getAllPostsByBlogId(
-    @ExtractOptionalUserFromRequest() user: UserContextDto,
+    @ExtractOptionalUserFromRequest() user: AccessContextDto,
     @Param('blogId') blogId: string,
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {

@@ -20,12 +20,18 @@ import {
 } from '../../core/constants/auth-tokens.inject-constants';
 import { LoginUseCase } from './application/usecases/login.usecases';
 import { CqrsModule } from '@nestjs/cqrs';
+import { Session, SessionSchema } from './domain/sessions.entity';
+import { SessionsRepository } from './infrastructure/sessions.repository';
 
 const useCases = [LoginUseCase];
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Session.name, schema: SessionSchema },
+    ]),
+
     BcryptModule,
     NotificationsModule,
     ThrottlerModule.forRoot([
@@ -43,6 +49,7 @@ const useCases = [LoginUseCase];
     UsersQueryRepository,
     AuthService,
     AuthQueryRepository,
+    SessionsRepository,
     LocalStrategy,
     JwtStrategy,
     ...useCases,
