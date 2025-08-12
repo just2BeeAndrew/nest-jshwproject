@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -24,7 +25,9 @@ import { RegistrationEmailRsendingInputDto } from './input-dto/registration-emai
 import { RegistrationConfirmationCodeInputDto } from './input-dto/confirmation-code.input-dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginCommand } from '../application/usecases/login.usecases';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { DomainException } from '../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -42,21 +45,40 @@ export class AuthController {
   async login(
     @ExtractUserFromRequest() user: UserContextDto,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
   ): Promise<{ accessToken: string }> {
+    const title = req.headers['user-agent'];
+    if (!title) {
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'Not Found',
+        extensions: [{ message: 'Header not found', key: ' Header' }],
+      });
+    }
+
+    const forwarded = req.headers['x-forwarded-for'] as string;
+    const ipFromHeader = forwarded ? forwarded.split(',')[0].trim() : null;
+    const ip =
+      ipFromHeader ||
+      req.ip ||
+      req.socket.remoteAddress ||
+      'IP не определён';
+
     const { accessToken, refreshToken } =
       await this.commandBus.execute<LoginCommand>(
-        new LoginCommand({ userId: user.id }),
+        new LoginCommand({ userId: user.id }, title, ip),
       );
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: true, //process.env.NODE_ENV === 'production',
+      secure: true,
     });
 
     return { accessToken };
   }
+
   @Post('refresh-token')
-  async refreshToken(){}
+  async refreshToken() {}
 
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)

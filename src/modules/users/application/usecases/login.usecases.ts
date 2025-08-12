@@ -7,7 +7,12 @@ import {
 import { JwtService } from '@nestjs/jwt';
 
 export class LoginCommand {
-  constructor(public dto: { userId: string }) {}
+  constructor(
+    public dto: { userId: string },
+    public title: string,
+    public ip: string,
+
+  ) {}
 }
 
 @CommandHandler(LoginCommand)
@@ -27,6 +32,10 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
     const refreshToken = this.refreshTokenJwtService.sign({
       id: dto.userId
     });
+
+    const { iat, exp} = this.refreshTokenJwtService.decode(refreshToken)
+
+
 
     return { accessToken, refreshToken };
   }
