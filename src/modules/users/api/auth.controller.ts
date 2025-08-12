@@ -13,8 +13,8 @@ import { AuthService } from '../application/auth.service';
 import { AuthQueryRepository } from '../infrastructure/query/auth.query-repository';
 import { LocalAuthGuard } from '../../../core/guards/local/local-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { ExtractUserFromRequest } from '../../../core/decorators/param/extract-user-from-request.decorator';
-import { UserContextDto } from '../../../core/dto/user-context.dto';
+import { ExtractUserFromAccessToken } from '../../../core/decorators/param/extract-user-from-access-token.decorator';
+import { AccessContextDto } from '../../../core/dto/access-context.dto';
 import { JwtAuthGuard } from '../../../core/guards/bearer/jwt-auth.guard';
 import { MeViewDto } from './view-dto/me.view-dto';
 import { CreateUserInputDto } from './input-dto/create-users.input-dto';
@@ -28,6 +28,10 @@ import { LoginCommand } from '../application/usecases/login.usecases';
 import { Request, Response } from 'express';
 import { DomainException } from '../../../core/exceptions/domain-exception';
 import { DomainExceptionCode } from '../../../core/exceptions/filters/domain-exception-codes';
+import { JwtRefreshAuthGuard } from '../../../core/guards/bearer/jwt-refresh-auth.guard';
+import { ExtractUserFromRefreshToken } from '../../../core/decorators/param/extract-user-from-refresh-token.decorator';
+import { RefreshContextDto } from '../../../core/dto/refresh-context-dto';
+import { RefreshTokenCommand } from '../application/usecases/refresh-token.usecase';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -43,7 +47,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   async login(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractUserFromAccessToken() user: AccessContextDto,
     @Res({ passthrough: true }) res: Response,
     @Req() req: Request,
   ): Promise<{ accessToken: string }> {
@@ -78,7 +82,10 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  async refreshToken() {}
+  @UseGuards(JwtRefreshAuthGuard)
+  async refreshToken(@ExtractUserFromRefreshToken() user: RefreshContextDto) {
+    const {accessToken, refreshToken} = await this.commandBus.execute<RefreshTokenCommand>(new RefreshTokenCommand(user.id, user.sessionId))
+  }
 
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -119,7 +126,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async me(@ExtractUserFromRequest() user: UserContextDto): Promise<MeViewDto> {
+  async me(@ExtractUserFromAccessToken() user: AccessContextDto): Promise<MeViewDto> {
     return this.authQueryRepository.me(user.id);
   }
 }

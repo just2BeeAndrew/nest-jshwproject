@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UserContextDto } from '../../dto/user-context.dto';
+import { RefreshContextDto } from '../../dto/refresh-context-dto';
 
-export const ExtractUserFromRequest = createParamDecorator(
-  (data: unknown, context: ExecutionContext): UserContextDto => {
+export const ExtractUserFromRefreshToken = createParamDecorator(
+  (data: unknown, context: ExecutionContext): RefreshContextDto => {
     const request = context.switchToHttp().getRequest();
 
     const user = request.user;

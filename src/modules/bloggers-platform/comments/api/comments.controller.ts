@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { CommentsViewDto } from './view-dto/comments.view-dto';
 import { JwtAuthGuard } from '../../../../core/guards/bearer/jwt-auth.guard';
-import { ExtractUserFromRequest } from '../../../../core/decorators/param/extract-user-from-request.decorator';
-import { UserContextDto } from '../../../../core/dto/user-context.dto';
+import { ExtractUserFromAccessToken } from '../../../../core/decorators/param/extract-user-from-access-token.decorator';
+import { AccessContextDto } from '../../../../core/dto/access-context.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CommentLikeStatusCommand } from '../application/usecases/comment-like-status.usecase';
 import { Public } from '../../../../core/decorators/public.decorator';
@@ -39,7 +39,7 @@ export class CommentsController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async getCommentById(
-    @ExtractOptionalUserFromRequest() user: UserContextDto | null,
+    @ExtractOptionalUserFromRequest() user: AccessContextDto | null,
     @Param('id') id: string,
   ): Promise<CommentsViewDto> {
     const userId = user ? user.id : null;
@@ -49,7 +49,7 @@ export class CommentsController {
   @Put(':commentId/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
   async commentLikeStatus(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractUserFromAccessToken() user: AccessContextDto,
     @Param('commentId') commentId: string,
     @Body() likeStatus: LikesStatusInputDto,
   ) {
@@ -61,7 +61,7 @@ export class CommentsController {
   @Put(':commentId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateComment(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractUserFromAccessToken() user: AccessContextDto,
     @Param('commentId') commentId: string,
     @Body() body: UpdateCommentInputDto,
   ) {
@@ -74,7 +74,7 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteComment(
-    @ExtractUserFromRequest() user: UserContextDto,
+    @ExtractUserFromAccessToken() user: AccessContextDto,
     @Param('commentId') commentId: string,
   ) {
     return await this.commandBus.execute<DeleteCommentCommand>(
