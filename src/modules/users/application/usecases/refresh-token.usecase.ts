@@ -28,7 +28,7 @@ export class RefreshTokenUseCase
     private readonly sessionsRepository: SessionsRepository,
   ) {}
 
-  async execute(command: RefreshTokenCommand) {
+  async execute(command: RefreshTokenCommand): Promise<{accessToken: string, refreshToken: string}> {
     const session = await this.sessionsRepository.findSessionById(
       command.sessionId,
     );
@@ -52,5 +52,8 @@ export class RefreshTokenUseCase
     const refreshPayload = this.refreshTokenJwtService.decode(refreshToken);
 
     session.setSession(refreshPayload.iat, refreshPayload.exp);
+    await this.sessionsRepository.save(session)
+
+    return {accessToken, refreshToken};
   }
 }

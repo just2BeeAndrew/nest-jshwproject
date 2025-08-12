@@ -22,8 +22,10 @@ import { LoginUseCase } from './application/usecases/login.usecases';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Session, SessionSchema } from './domain/sessions.entity';
 import { SessionsRepository } from './infrastructure/sessions.repository';
+import { RefreshTokenUseCase } from './application/usecases/refresh-token.usecase';
+import { LogoutUseCase } from './application/usecases/logout.usecase';
 
-const useCases = [LoginUseCase];
+const useCases = [LoginUseCase, RefreshTokenUseCase, LogoutUseCase];
 
 @Module({
   imports: [

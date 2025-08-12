@@ -32,6 +32,7 @@ import { JwtRefreshAuthGuard } from '../../../core/guards/bearer/jwt-refresh-aut
 import { ExtractUserFromRefreshToken } from '../../../core/decorators/param/extract-user-from-refresh-token.decorator';
 import { RefreshContextDto } from '../../../core/dto/refresh-context-dto';
 import { RefreshTokenCommand } from '../application/usecases/refresh-token.usecase';
+import { LogoutCommand } from '../application/usecases/logout.usecase';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -63,10 +64,7 @@ export class AuthController {
     const forwarded = req.headers['x-forwarded-for'] as string;
     const ipFromHeader = forwarded ? forwarded.split(',')[0].trim() : null;
     const ip =
-      ipFromHeader ||
-      req.ip ||
-      req.socket.remoteAddress ||
-      'IP не определён';
+      ipFromHeader || req.ip || req.socket.remoteAddress || 'IP не определён';
 
     const { accessToken, refreshToken } =
       await this.commandBus.execute<LoginCommand>(
@@ -83,8 +81,21 @@ export class AuthController {
 
   @Post('refresh-token')
   @UseGuards(JwtRefreshAuthGuard)
-  async refreshToken(@ExtractUserFromRefreshToken() user: RefreshContextDto) {
-    const {accessToken, refreshToken} = await this.commandBus.execute<RefreshTokenCommand>(new RefreshTokenCommand(user.id, user.sessionId))
+  async refreshToken(
+    @ExtractUserFromRefreshToken() user: RefreshContextDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } =
+      await this.commandBus.execute<RefreshTokenCommand>(
+        new RefreshTokenCommand(user.id, user.sessionId),
+      );
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return { accessToken };
   }
 
   @Post('password-recovery')
@@ -121,12 +132,22 @@ export class AuthController {
     return this.authService.registrationEmailResending(body.email);
   }
 
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtRefreshAuthGuard)
+  async logout(@ExtractUserFromRefreshToken() user: RefreshContextDto, @Res({ passthrough: true }) res: Response,) {
+    await this.commandBus.execute<LogoutCommand>(new LogoutCommand(user.id, user.sessionId));
+    res.clearCookie('refreshToken', { httpOnly: true , secure: true });
+  }
+
   @SkipThrottle()
   @ApiBearerAuth()
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async me(@ExtractUserFromAccessToken() user: AccessContextDto): Promise<MeViewDto> {
+  async me(
+    @ExtractUserFromAccessToken() user: AccessContextDto,
+  ): Promise<MeViewDto> {
     return this.authQueryRepository.me(user.id);
   }
 }
