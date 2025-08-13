@@ -25,8 +25,19 @@ import { SessionsRepository } from './infrastructure/sessions.repository';
 import { RefreshTokenUseCase } from './application/usecases/refresh-token.usecase';
 import { LogoutUseCase } from './application/usecases/logout.usecase';
 import { SessionsController } from './api/sessions.controller';
+import { DeleteSessionByIdUseCase } from './application/usecases/delete-session-by-id.usecase';
+import { DeleteSessionsExcludeCurrentUseCase } from './application/usecases/delete-sessions-exclude-current.usecase';
+import { GetBlogByIdQueryHandler } from '../bloggers-platform/blogs/application/queries/get-blog-by-id.query-handler';
 
-const useCases = [LoginUseCase, RefreshTokenUseCase, LogoutUseCase];
+const useCases = [
+  LoginUseCase,
+  RefreshTokenUseCase,
+  LogoutUseCase,
+  DeleteSessionByIdUseCase,
+  DeleteSessionsExcludeCurrentUseCase,
+];
+
+const queries = [GetBlogByIdQueryHandler];
 
 @Module({
   imports: [
@@ -56,6 +67,7 @@ const useCases = [LoginUseCase, RefreshTokenUseCase, LogoutUseCase];
     LocalStrategy,
     JwtStrategy,
     ...useCases,
+    ...queries,
     {
       provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
       useFactory: (): JwtService => {
