@@ -21,7 +21,7 @@ export class DomainExceptionFactory {
       code: DomainExceptionCode.NotFound,
       message: `Not Found`,
       extensions: [
-        new Extension(`${entity} not found`, key || entity.toLowerCase()),
+        new Extension(`${entity}`, key || entity.toLowerCase()),
       ],
     });
   }
@@ -39,6 +39,14 @@ export class DomainExceptionFactory {
       code: DomainExceptionCode.BadRequest,
       message,
       extensions: [new Extension(message, key || 'badRequest')],
+    });
+  }
+
+  static forbidden(message: string, key?: string): DomainException {
+    return this.create({
+      code: DomainExceptionCode.Forbidden,
+      message,
+      extensions: [new Extension(message, key || 'forbidden')],
     });
   }
 }
