@@ -24,6 +24,7 @@ import { Session, SessionSchema } from './domain/sessions.entity';
 import { SessionsRepository } from './infrastructure/sessions.repository';
 import { RefreshTokenUseCase } from './application/usecases/refresh-token.usecase';
 import { LogoutUseCase } from './application/usecases/logout.usecase';
+import { SessionsController } from './api/sessions.controller';
 
 const useCases = [LoginUseCase, RefreshTokenUseCase, LogoutUseCase];
 
@@ -44,7 +45,7 @@ const useCases = [LoginUseCase, RefreshTokenUseCase, LogoutUseCase];
     ]),
     CqrsModule,
   ],
-  controllers: [UsersController, AuthController],
+  controllers: [UsersController, AuthController, SessionsController],
   providers: [
     UsersService,
     UsersRepository,
