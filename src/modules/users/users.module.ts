@@ -28,6 +28,7 @@ import { SessionsController } from './api/sessions.controller';
 import { DeleteSessionByIdUseCase } from './application/usecases/delete-session-by-id.usecase';
 import { DeleteSessionsExcludeCurrentUseCase } from './application/usecases/delete-sessions-exclude-current.usecase';
 import { GetBlogByIdQueryHandler } from '../bloggers-platform/blogs/application/queries/get-blog-by-id.query-handler';
+import { BloggersPlatformModule } from '../bloggers-platform/bloggers-platform.module';
 
 const useCases = [
   LoginUseCase,
@@ -37,7 +38,7 @@ const useCases = [
   DeleteSessionsExcludeCurrentUseCase,
 ];
 
-const queries = [GetBlogByIdQueryHandler];
+const queries = [];
 
 @Module({
   imports: [
