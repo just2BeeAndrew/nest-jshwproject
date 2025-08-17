@@ -51,7 +51,7 @@ const queries = [];
     NotificationsModule,
     ThrottlerModule.forRoot([
       {
-        ttl: 10_000,
+        ttl: 10000,
         limit: 5,
       },
     ]),
@@ -74,7 +74,7 @@ const queries = [];
       useFactory: (): JwtService => {
         return new JwtService({
           secret: 'access-token-secret',
-          signOptions: { expiresIn: '10_000' },
+          signOptions: { expiresIn: 10000 },
         });
       },
       inject: [],
@@ -84,7 +84,7 @@ const queries = [];
       useFactory: (): JwtService => {
         return new JwtService({
           secret: 'refresh-token-secret',
-          signOptions: { expiresIn: '20_000' },
+          signOptions: { expiresIn: 20000 },
         });
       },
       inject: [],
