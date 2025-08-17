@@ -27,8 +27,6 @@ import { LogoutUseCase } from './application/usecases/logout.usecase';
 import { SessionsController } from './api/sessions.controller';
 import { DeleteSessionByIdUseCase } from './application/usecases/delete-session-by-id.usecase';
 import { DeleteSessionsExcludeCurrentUseCase } from './application/usecases/delete-sessions-exclude-current.usecase';
-import { GetBlogByIdQueryHandler } from '../bloggers-platform/blogs/application/queries/get-blog-by-id.query-handler';
-import { BloggersPlatformModule } from '../bloggers-platform/bloggers-platform.module';
 
 const useCases = [
   LoginUseCase,
@@ -74,7 +72,7 @@ const queries = [];
       useFactory: (): JwtService => {
         return new JwtService({
           secret: 'access-token-secret',
-          signOptions: { expiresIn: 10000 },
+          signOptions: { expiresIn: 10 },
         });
       },
       inject: [],
@@ -84,7 +82,7 @@ const queries = [];
       useFactory: (): JwtService => {
         return new JwtService({
           secret: 'refresh-token-secret',
-          signOptions: { expiresIn: 20000 },
+          signOptions: { expiresIn: 20 },
         });
       },
       inject: [],
