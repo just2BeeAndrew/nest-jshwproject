@@ -14,6 +14,7 @@ import {
   CommentModelType,
 } from '../../bloggers-platform/comments/domain/comments.entity';
 import { Status, StatusModelType } from '../../bloggers-platform/comments/domain/status.entity';
+import { Session, SessionModelType } from '../../users/domain/sessions.entity';
 
 @Injectable()
 export class TestingService {
@@ -23,6 +24,7 @@ export class TestingService {
     @InjectModel(User.name) private UserModel: UserModelType,
     @InjectModel(Comment.name) private CommentModel: CommentModelType,
     @InjectModel(Status.name) private StatusModel: StatusModelType,
+    @InjectModel(Session.name) private SessionModel: SessionModelType,
   ) {}
 
   async deleteAll() {
@@ -32,6 +34,7 @@ export class TestingService {
       this.UserModel.clean(),
       this.CommentModel.clean(),
       this.StatusModel.clean(),
+      this.SessionModel.clean(),
     ]);
   }
 }

@@ -27,6 +27,7 @@ import { LogoutUseCase } from './application/usecases/logout.usecase';
 import { SessionsController } from './api/sessions.controller';
 import { DeleteSessionByIdUseCase } from './application/usecases/delete-session-by-id.usecase';
 import { DeleteSessionsExcludeCurrentUseCase } from './application/usecases/delete-sessions-exclude-current.usecase';
+import { JwtRefreshStrategy } from '../../core/guards/bearer/jwt-refresh.strategy';
 
 const useCases = [
   LoginUseCase,
@@ -65,6 +66,7 @@ const queries = [];
     SessionsRepository,
     LocalStrategy,
     JwtStrategy,
+    JwtRefreshStrategy,
     ...useCases,
     ...queries,
     {

@@ -71,6 +71,8 @@ export class AuthController {
         new LoginCommand({ userId: user.id }, title, ip),
       );
 
+    console.log("login ",accessToken,"ref ",refreshToken);
+
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,

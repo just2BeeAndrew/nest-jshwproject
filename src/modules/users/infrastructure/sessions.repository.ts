@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Session, SessionDocument, SessionModelType } from '../domain/sessions.entity';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class SessionsRepository {
@@ -10,7 +11,7 @@ export class SessionsRepository {
 
   async findSessionById(sessionId: string) {
     return this.SessionModel.findOne({
-      _id: sessionId,
+      _id: new Types.ObjectId(sessionId),
       deletedAt: null
     })
   }
