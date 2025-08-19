@@ -33,8 +33,9 @@ import { ExtractUserFromRefreshToken } from '../../../core/decorators/param/extr
 import { RefreshContextDto } from '../../../core/dto/refresh-context-dto';
 import { RefreshTokenCommand } from '../application/usecases/refresh-token.usecase';
 import { LogoutCommand } from '../application/usecases/logout.usecase';
+import { CustomThrottlerGuard } from '../../../core/guards/throttler.guard';
 
-@UseGuards(ThrottlerGuard)
+@UseGuards(CustomThrottlerGuard)
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -136,9 +137,14 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtRefreshAuthGuard)
-  async logout(@ExtractUserFromRefreshToken() user: RefreshContextDto, @Res({ passthrough: true }) res: Response,) {
-    await this.commandBus.execute<LogoutCommand>(new LogoutCommand(user.id, user.deviceId));
-    res.clearCookie('refreshToken', { httpOnly: true , secure: true });
+  async logout(
+    @ExtractUserFromRefreshToken() user: RefreshContextDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.commandBus.execute<LogoutCommand>(
+      new LogoutCommand(user.id, user.deviceId),
+    );
+    res.clearCookie('refreshToken', { httpOnly: true, secure: true });
   }
 
   @SkipThrottle()

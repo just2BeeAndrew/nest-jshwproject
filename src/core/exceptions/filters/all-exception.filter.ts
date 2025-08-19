@@ -47,6 +47,9 @@ export class AllExceptionFilter implements ExceptionFilter {
       case DomainExceptionCode.PasswordRecoveryCodeExpired:
         status = HttpStatus.BAD_REQUEST;
         break;
+      case DomainExceptionCode.TooManyRequests:
+        status = HttpStatus.TOO_MANY_REQUESTS;
+        break;
       default:
         status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
