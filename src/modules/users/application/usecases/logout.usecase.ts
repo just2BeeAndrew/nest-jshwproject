@@ -7,7 +7,7 @@ import { DomainExceptionFactory } from '../../../../core/exceptions/filters/doma
 export class LogoutCommand {
   constructor(
     public userId: string,
-    public sessionId: string,
+    public deviceId: string,
   ) {}
 }
 
@@ -20,13 +20,13 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
 
   async execute(command: LogoutCommand) {
     const session = await this.sessionRepository.findSessionById(
-      command.sessionId,
+      command.deviceId,
     );
     if (!session) {
       throw DomainExceptionFactory.notFound('Session not found', 'session');
     }
 
     session.softDelete();
-    this.sessionRepository.save(session);
+    await this.sessionRepository.save(session);
   }
 }

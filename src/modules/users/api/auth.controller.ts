@@ -71,8 +71,6 @@ export class AuthController {
         new LoginCommand({ userId: user.id }, title, ip),
       );
 
-    console.log("login ",accessToken,"ref ",refreshToken);
-
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
@@ -83,13 +81,14 @@ export class AuthController {
 
   @Post('refresh-token')
   @UseGuards(JwtRefreshAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async refreshToken(
     @ExtractUserFromRefreshToken() user: RefreshContextDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { accessToken, refreshToken } =
       await this.commandBus.execute<RefreshTokenCommand>(
-        new RefreshTokenCommand(user.id, user.sessionId),
+        new RefreshTokenCommand(user.id, user.deviceId),
       );
 
     res.cookie('refreshToken', refreshToken, {
@@ -138,7 +137,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtRefreshAuthGuard)
   async logout(@ExtractUserFromRefreshToken() user: RefreshContextDto, @Res({ passthrough: true }) res: Response,) {
-    await this.commandBus.execute<LogoutCommand>(new LogoutCommand(user.id, user.sessionId));
+    await this.commandBus.execute<LogoutCommand>(new LogoutCommand(user.id, user.deviceId));
     res.clearCookie('refreshToken', { httpOnly: true , secure: true });
   }
 

@@ -9,9 +9,9 @@ export class SessionsRepository {
     @InjectModel(Session.name) private SessionModel: SessionModelType,
   ) {}
 
-  async findSessionById(sessionId: string) {
+  async findSessionById(deviceId: string) {
     return this.SessionModel.findOne({
-      _id: new Types.ObjectId(sessionId),
+      _id: new Types.ObjectId(deviceId),
       deletedAt: null
     })
   }

@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   UseGuards,
 } from '@nestjs/common';
 import { JwtRefreshAuthGuard } from '../../../core/guards/bearer/jwt-refresh-auth.guard';
@@ -25,6 +26,7 @@ export class SessionsController {
   @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.OK)
   async getAllSessions(@ExtractUserFromRefreshToken() user: RefreshContextDto) {
+
     return this.queryBus.execute(new GetAllSessionsQuery(user.id));
   }
 
@@ -35,14 +37,14 @@ export class SessionsController {
     @ExtractUserFromRefreshToken() user: RefreshContextDto,
   ) {
     return this.commandBus.execute<DeleteSessionsExcludeCurrentCommand>(
-      new DeleteSessionsExcludeCurrentCommand(user.id, user.sessionId),
+      new DeleteSessionsExcludeCurrentCommand(user.id, user.deviceId),
     );
   }
 
   @Delete('devices/:deviceId')
   @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteSessionById(@ExtractUserFromRefreshToken() user: RefreshContextDto) {
-    return this.commandBus.execute<DeleteSessionByIdCommand>(new DeleteSessionByIdCommand(user.id, user.sessionId));
+  async deleteSessionById(@ExtractUserFromRefreshToken() user: RefreshContextDto, @Param('deviceId') uriParam: string) {
+    return this.commandBus.execute<DeleteSessionByIdCommand>(new DeleteSessionByIdCommand(user.id, user.deviceId, uriParam ));
   }
 }

@@ -40,7 +40,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 
     const refreshToken = this.refreshTokenJwtService.sign({
       id: command.dto.userId,
-      sessionId: sessionId.toString(),
+      deviceId: sessionId.toString(),
     });
 
     const { iat, exp } = this.refreshTokenJwtService.decode(refreshToken);

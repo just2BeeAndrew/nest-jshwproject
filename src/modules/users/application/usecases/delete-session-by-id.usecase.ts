@@ -1,11 +1,14 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionsRepository } from '../../infrastructure/sessions.repository';
 import { DomainExceptionFactory } from '../../../../core/exceptions/filters/domain-exception-factory';
+import { DomainException } from '../../../../core/exceptions/domain-exception';
+import { DomainExceptionCode } from '../../../../core/exceptions/filters/domain-exception-codes';
 
 export class DeleteSessionByIdCommand {
   constructor(
     public userId: string,
-    public sessionId: string,
+    public deviceId: string,
+    public uriParam: string,
   ) {}
 }
 
@@ -17,10 +20,14 @@ export class DeleteSessionByIdUseCase
 
   async execute(command: DeleteSessionByIdCommand) {
     const session = await this.sessionRepository.findSessionById(
-      command.sessionId,
+      command.uriParam,
     );
     if (!session) {
-      throw DomainExceptionFactory.notFound('Session not found.', 'session');
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: "Not found",
+        extensions:[{message:"device not found", key: "device"}]
+      });
     }
 
     if (session.userId !== command.userId) {

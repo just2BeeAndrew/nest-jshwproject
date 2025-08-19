@@ -28,6 +28,8 @@ import { SessionsController } from './api/sessions.controller';
 import { DeleteSessionByIdUseCase } from './application/usecases/delete-session-by-id.usecase';
 import { DeleteSessionsExcludeCurrentUseCase } from './application/usecases/delete-sessions-exclude-current.usecase';
 import { JwtRefreshStrategy } from '../../core/guards/bearer/jwt-refresh.strategy';
+import { GetAllSessionsQueryHandler } from './application/queries/get-all-sessions.query-heandler';
+import { SessionsQueryRepository } from './infrastructure/query/session.query-repository';
 
 const useCases = [
   LoginUseCase,
@@ -37,7 +39,7 @@ const useCases = [
   DeleteSessionsExcludeCurrentUseCase,
 ];
 
-const queries = [];
+const queries = [GetAllSessionsQueryHandler];
 
 @Module({
   imports: [
@@ -64,6 +66,7 @@ const queries = [];
     AuthService,
     AuthQueryRepository,
     SessionsRepository,
+    SessionsQueryRepository,
     LocalStrategy,
     JwtStrategy,
     JwtRefreshStrategy,

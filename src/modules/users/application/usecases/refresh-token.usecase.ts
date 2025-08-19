@@ -12,7 +12,7 @@ import { DomainExceptionCode } from '../../../../core/exceptions/filters/domain-
 export class RefreshTokenCommand {
   constructor(
     public userId: string,
-    public sessionId: string,
+    public deviceId: string,
   ) {}
 }
 
@@ -30,7 +30,7 @@ export class RefreshTokenUseCase
 
   async execute(command: RefreshTokenCommand): Promise<{accessToken: string, refreshToken: string}> {
     const session = await this.sessionsRepository.findSessionById(
-      command.sessionId,
+      command.deviceId,
     );
     if (!session) {
       throw new DomainException({
@@ -46,7 +46,7 @@ export class RefreshTokenUseCase
 
     const refreshToken = this.refreshTokenJwtService.sign({
       id: command.userId,
-      sessionId: command.sessionId,
+      sessionId: command.deviceId,
     });
 
     const refreshPayload = this.refreshTokenJwtService.decode(refreshToken);
