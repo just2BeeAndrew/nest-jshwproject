@@ -12,7 +12,6 @@ export class SessionsRepository {
   async findSessionById(deviceId: string) {
     return this.SessionModel.findOne({
       _id: new Types.ObjectId(deviceId),
-      deletedAt: null
     })
   }
 

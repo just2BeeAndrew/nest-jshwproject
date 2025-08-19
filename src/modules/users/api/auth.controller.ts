@@ -44,7 +44,6 @@ export class AuthController {
     private authQueryRepository: AuthQueryRepository,
   ) {}
 
-  @SkipThrottle()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)

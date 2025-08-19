@@ -34,7 +34,6 @@ export class DeleteSessionByIdUseCase
       throw DomainExceptionFactory.forbidden('User is not owner', 'user');
     }
 
-    session.softDelete();
-    await this.sessionRepository.save(session);
+    session.deleteSession();
   }
 }

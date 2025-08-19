@@ -26,7 +26,6 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
       throw DomainExceptionFactory.notFound('Session not found', 'session');
     }
 
-    session.softDelete();
-    await this.sessionRepository.save(session);
+    session.deleteSession();
   }
 }

@@ -7,7 +7,7 @@ import { DomainExceptionFactory } from '../../../../core/exceptions/filters/doma
 export class DeleteSessionsExcludeCurrentCommand {
   constructor(
     public userId: string,
-    public sessionId: string,
+    public deviceId: string,
   ) {}
 }
 
@@ -21,7 +21,7 @@ export class DeleteSessionsExcludeCurrentUseCase
   ) {}
 
   async execute(command: DeleteSessionsExcludeCurrentCommand) {
-    const session = await this.sessionRepository.findSessionById(command.sessionId);
+    const session = await this.sessionRepository.findSessionById(command.deviceId);
     if (!session) {
       throw DomainExceptionFactory.notFound("session not found", "session");
     }
@@ -30,6 +30,6 @@ export class DeleteSessionsExcludeCurrentUseCase
       throw DomainExceptionFactory.forbidden("User is not owner", "user");
     }
 
-    await this.SessionModel.softDeleteSessionExcludeCurrent(command.userId, command.sessionId);
+    await this.SessionModel.softDeleteSessionExcludeCurrent(command.userId, command.deviceId);
   }
 }

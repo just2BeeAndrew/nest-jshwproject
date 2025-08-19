@@ -45,6 +45,10 @@ export class Session {
     this.exp = exp;
   }
 
+  async deleteSession(this: SessionDocument) {
+    await this.deleteOne()
+  }
+
   softDelete() {
     if (this.deletedAt !== null) {
       throw DomainExceptionFactory.badRequest('Already Deleted', 'session');
@@ -57,14 +61,11 @@ export class Session {
     userId: string,
     deviceId: string,
   ) {
-    await this.updateMany(
+    console.log(userId, deviceId);
+    await this.deleteMany(
       {
         userId: userId,
-        _id: { $ne: deviceId },
-        deletedAt: null,
-      },
-      {
-        $set: { deletedAt: new Date() },
+        _id: { $ne: new Types.ObjectId(deviceId) },
       },
     );
   }

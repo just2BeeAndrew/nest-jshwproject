@@ -46,7 +46,7 @@ export class RefreshTokenUseCase
 
     const refreshToken = this.refreshTokenJwtService.sign({
       id: command.userId,
-      sessionId: command.deviceId,
+      deviceId: command.deviceId,
     });
 
     const refreshPayload = this.refreshTokenJwtService.decode(refreshToken);
