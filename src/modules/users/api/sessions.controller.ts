@@ -26,7 +26,6 @@ export class SessionsController {
   @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.OK)
   async getAllSessions(@ExtractUserFromRefreshToken() user: RefreshContextDto) {
-
     return this.queryBus.execute(new GetAllSessionsQuery(user.id));
   }
 
@@ -44,7 +43,12 @@ export class SessionsController {
   @Delete('devices/:deviceId')
   @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteSessionById(@ExtractUserFromRefreshToken() user: RefreshContextDto, @Param('deviceId') uriParam: string) {
-    return this.commandBus.execute<DeleteSessionByIdCommand>(new DeleteSessionByIdCommand(user.id, user.deviceId, uriParam ));
+  async deleteSessionById(
+    @ExtractUserFromRefreshToken() user: RefreshContextDto,
+    @Param('deviceId') uriParam: string,
+  ) {
+    return this.commandBus.execute<DeleteSessionByIdCommand>(
+      new DeleteSessionByIdCommand(user.id, user.deviceId, uriParam),
+    );
   }
 }
