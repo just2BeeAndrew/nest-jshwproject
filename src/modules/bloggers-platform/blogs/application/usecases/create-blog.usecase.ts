@@ -1,6 +1,5 @@
 import { CreateBlogDto } from '../../dto/create-blog.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateCommentCommand } from '../../../comments/application/usecases/create-coment.usecase';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogModelType } from '../../domain/blogs.entity';
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
