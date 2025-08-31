@@ -15,7 +15,6 @@ export class SessionsQueryRepository {
     const sessionDtos = sessions.map((session) =>
       SessionsViewDto.mapToView(session),
     );
-    console.log("GETALL_SESSIONS", sessionDtos);
 
     return sessionDtos;
   }
