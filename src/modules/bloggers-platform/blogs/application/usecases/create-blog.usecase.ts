@@ -18,11 +18,11 @@ export class CreateBlogUseCase
     private blogRepository: BlogsRepository,
   ) {}
 
-  async execute({dto}: CreateBlogCommand): Promise<string> {
+  async execute({ dto }: CreateBlogCommand): Promise<string> {
     const blog = await this.BlogModel.createInstance(dto);
 
     await this.blogRepository.save(blog);
 
-    return blog._id.toString()
+    return blog._id.toString();
   }
 }
