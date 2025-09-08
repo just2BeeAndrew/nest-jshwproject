@@ -46,7 +46,7 @@ export class Session {
   }
 
   async deleteSession(this: SessionDocument) {
-    await this.deleteOne()
+    await this.deleteOne();
   }
 
   softDelete() {
@@ -61,13 +61,10 @@ export class Session {
     userId: string,
     deviceId: string,
   ) {
-    console.log(userId, deviceId);
-    await this.deleteMany(
-      {
-        userId: userId,
-        _id: { $ne: new Types.ObjectId(deviceId) },
-      },
-    );
+    await this.deleteMany({
+      userId: userId,
+      _id: { $ne: new Types.ObjectId(deviceId) },
+    });
   }
 
   static async clean(this: SessionModelType) {
