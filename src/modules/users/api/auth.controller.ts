@@ -18,7 +18,7 @@ import { AccessContextDto } from '../../../core/dto/access-context.dto';
 import { JwtAuthGuard } from '../../../core/guards/bearer/jwt-auth.guard';
 import { MeViewDto } from './view-dto/me.view-dto';
 import { CreateUserInputDto } from './input-dto/create-users.input-dto';
-import { SkipThrottle, ThrottlerGuard } from '@nestjs/throttler';
+import { SkipThrottle } from '@nestjs/throttler';
 import { PasswordRecoveryInputDto } from './input-dto/password-recovery.input-dto';
 import { newPasswordInputDto } from './input-dto/newPassword.input-dto';
 import { RegistrationEmailRsendingInputDto } from './input-dto/registration-email-rsending.input-dto';

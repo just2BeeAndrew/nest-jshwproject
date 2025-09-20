@@ -29,7 +29,7 @@ export class AuthService {
       return null;
     }
 
-    if(!user.emailConfirmation.isConfirmed){
+    if (!user.emailConfirmation.isConfirmed) {
       return null;
     }
 
@@ -44,7 +44,6 @@ export class AuthService {
 
     return { id: user._id.toString() };
   }
-
 
   async passwordRecovery(email: string) {
     const user = await this.usersRepository.findByEmail(email);
@@ -97,7 +96,7 @@ export class AuthService {
     if (user.emailConfirmation.isConfirmed) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: "Bad Request",
+        message: 'Bad Request',
         extensions: [{ message: 'User already confirmed', key: 'code' }],
       });
     }
@@ -114,7 +113,9 @@ export class AuthService {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
         message: 'Bad Request',
-        extensions: [{ message: 'Invalid expiration date', key: 'expirationDate' }],
+        extensions: [
+          { message: 'Invalid expiration date', key: 'expirationDate' },
+        ],
       });
     }
 
@@ -126,8 +127,6 @@ export class AuthService {
     const createdUserId = await this.usersService.createUser(dto);
 
     const confirmCode = uuidv4();
-
-
 
     createdUserId.setConfirmationCode(confirmCode);
     await this.usersRepository.save(createdUserId);
