@@ -84,7 +84,6 @@ export class BlogsController {
     @Param('blogId') blogId: string,
     @Body() body: CreatePostsInputDto,
   ) {
-    console.log(body);
     const postId = await this.postsService.createPost({ ...body, blogId });
 
     return this.postsQueryRepository.getByIdOrNotFoundFail(
