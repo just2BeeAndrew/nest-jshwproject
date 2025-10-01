@@ -22,7 +22,6 @@ export class GetCommentByIdQueryHandler
   ) {}
 
   async execute(query: GetCommentByIdQuery): Promise<CommentsViewDto> {
-    console.log();
     let userStatus: LikeStatus = LikeStatus.None;
 
     if (query.userId) {

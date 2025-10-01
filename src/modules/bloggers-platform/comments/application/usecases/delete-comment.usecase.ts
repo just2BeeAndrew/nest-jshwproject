@@ -20,7 +20,6 @@ export class DeleteCommentUseCase
     const comment = await this.commentRepository.findCommentById(
       command.commentId,
     );
-    console.log(comment);
     if (!comment) {
       throw new DomainException({
         code: DomainExceptionCode.NotFound,

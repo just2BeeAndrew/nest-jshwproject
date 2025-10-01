@@ -21,7 +21,6 @@ export class CommentsQueryRepository {
       _id: id,
       deletedAt: null,
     });
-
     if (!comment) {
       throw new DomainException({
         code: DomainExceptionCode.NotFound,
